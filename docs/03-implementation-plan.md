@@ -27,7 +27,7 @@
 | 9 | W8 | web | Daily log sheets | 1 d | ✅ | `log-sheets`, `hos-scenarios` green |
 | 10 | W9 | web | UX polish, errors, cold start, responsive, a11y | 0.5 d | ✅ | `cold-start`, `errors`, `responsive`, `a11y` green |
 | 11 | A10 + W10 | both | Production (Render live providers + Vercel) + smoke | 0.5 d | ⬜ | `@smoke` green in production |
-| 12 | A11 + W11 | both | READMEs, Loom, submit | 0.5 d | ⬜ | Submitted |
+| 12 | A11 + W11 | both | READMEs, Loom, submit | 0.5 d | 🟨 | Submitted |
 
 **≈ 7–7.5 working days.** Cut order if short on time: W9 ⏭️ items → W7 share link → stretch tasks.
 Never cut W1, A2, A3, W8.
@@ -145,9 +145,9 @@ Outer loop: enable `trip-form.spec.ts`.
 
 | ID | Task | Status |
 |---|---|---|
-| W11-01 | Web README: live URL, API repo link, screenshots/GIF, stack, E2E instructions, cold-start note | ⬜ |
-| W11-02 | Final DoD check (tick every AC in `01-definition-of-done.md`) | ⬜ |
-| W11-03 | Loom 3–5 min: live demo → logs vs company template → API engine + golden tests → Playwright run → trade-offs (two repos, cold start, assumptions) | ⬜ |
+| W11-01 | Web README: live URL, API repo link, screenshots/GIF, stack, E2E instructions, cold-start note | 🟨 |
+| W11-02 | Final DoD check (tick every AC in `01-definition-of-done.md`) | 🟨 |
+| W11-03 | Loom 3–5 min: live demo → logs vs company template → API engine + golden tests → Playwright run → trade-offs (two repos, cold start, assumptions) | 🟨 |
 | W11-04 | Submit: Vercel URL + both GitHub repos + Loom | ⬜ |
 
 ---
