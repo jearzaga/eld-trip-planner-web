@@ -14,7 +14,7 @@
 | Order | Phase | Repo | Name | Est. | Status | Gate |
 |---|---|---|---|---|---|---|
 | 1 | **A0** | api | Foundation + Render health deploy | 0.5 d | 🟨 | `/api/health/` green locally, CI, Render |
-| 1 | **W0** | web | Foundation + Vercel shell deploy | 0.5 d | ⬜ | Shell green locally, CI, Vercel |
+| 1 | **W0** | web | Foundation + Vercel shell deploy | 0.5 d | 🟨 | Shell green locally, CI, Vercel |
 | 2 | **W1** | web | **Playwright harness + all acceptance specs** | 0.5 d | ⬜ | `harness.spec.ts` green; every AC has a `fixme` spec; CI e2e job green |
 | 2 | **A1** | api | Acceptance tests (pytest, skipped) | 0.25 d | ⬜ | SC-1…SC-7 collected |
 | 3 | A2 | api | HOS engine | 1 d | ⬜ | Goldens + property tests |
@@ -39,7 +39,7 @@ Never cut W1, A2, A3, W8.
 | ID | Task | Test first | Status |
 |---|---|---|---|
 | W0-01 | Create GitHub repo `eld-trip-planner-web` (public); add `CLAUDE.md`, `README.md`, `docs/` | — | ⬜ |
-| W0-02 | Per `06-project-setup.md`: Vite React-TS; Tailwind v4; `@/` alias; shadcn/ui init + components; react-router, TanStack Query, Zustand, axios, react-hook-form + zod, react-leaflet, date-fns; Vitest + RTL + MSW; scripts | `src/App.test.tsx` renders | ⬜ |
+| W0-02 | Per `06-project-setup.md`: Vite React-TS; Tailwind v4; `@/` alias; shadcn/ui init + components; react-router, TanStack Query, Zustand, axios, react-hook-form + zod, react-leaflet, date-fns; Vitest + RTL + MSW; scripts | `src/App.test.tsx` renders | ✅ |
 | W0-03 | App shell: providers, router, header "ELD Trip Planner", empty planner layout; axios `lib/api/client.ts` (base URL, 90 s timeout, error normalization); `stores/ui-store.ts` | `App.test.tsx` heading; `client.test.ts` error normalization | ⬜ |
 | W0-04 | `vercel.json` SPA rewrite | — | ⬜ |
 | W0-05 | CI `unit` job: lint, typecheck, vitest | push → green | ⬜ |

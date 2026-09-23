@@ -41,6 +41,7 @@ npm create vite@latest . -- --template react-ts
 #  → "Current directory is not empty": choose "Ignore files and continue"
 git checkout -- README.md CLAUDE.md 2>/dev/null || true   # restore our files if the template overwrote them
 npm install
+npm install -D typescript@5.9.3  # keep the documented TypeScript 5.x line if Vite defaults to 6.x
 npm run dev                      # http://localhost:5173 shows the Vite starter
 ```
 
@@ -131,10 +132,10 @@ export default defineConfig({
 ### 5.1 Initialize
 
 ```bash
-npx shadcn@latest init
+npx shadcn@latest init --template vite --base radix --preset nova --css-variables --yes
 ```
 
-Answer the prompts: pick a **base color** (we suggest *Neutral* or *Slate*) and keep **CSS variables** on.
+This selects the Radix-based Nova preset with a **Neutral** base color and keeps **CSS variables** on.
 `init` does the following:
 
 - creates `components.json` (shadcn config, aliases `@/components`, `@/lib/utils`)
@@ -145,8 +146,11 @@ Answer the prompts: pick a **base color** (we suggest *Neutral* or *Slate*) and 
 ### 5.2 Add the components this app needs
 
 ```bash
-npx shadcn@latest add button input label card badge separator tabs tooltip \
-  popover command combobox slider switch collapsible skeleton alert toast field scroll-area sheet
+npx shadcn@latest add @shadcn/button @shadcn/input @shadcn/label @shadcn/card \
+  @shadcn/badge @shadcn/separator @shadcn/tabs @shadcn/tooltip @shadcn/popover \
+  @shadcn/command @shadcn/combobox @shadcn/slider @shadcn/switch @shadcn/collapsible \
+  @shadcn/skeleton @shadcn/alert @shadcn/sonner @shadcn/field \
+  @shadcn/scroll-area @shadcn/sheet --yes
 ```
 
 | Component | Used for |
@@ -156,7 +160,7 @@ npx shadcn@latest add button input label card badge separator tabs tooltip \
 | `combobox` (or `popover` + `command`) | Location autocomplete. For async server search, `popover` + `command` gives full control |
 | `slider`, `switch`, `collapsible` | Cycle-used slider, inspections toggle, "Log details" section |
 | `tabs` | Log sheet day tabs |
-| `skeleton`, `alert`, `toast` | Loading states, error banner, copy-link / retry toasts |
+| `skeleton`, `alert`, `sonner` | Loading states, error banner, copy-link / retry toasts |
 | `tooltip`, `scroll-area`, `sheet` | Rule explanations, long timelines, mobile form drawer |
 
 Components are written to `src/components/ui/*.tsx` and imported like this:
@@ -442,7 +446,7 @@ createRoot(document.getElementById('root')!).render(
 );
 ```
 
-Add the toast container from the shadcn `toast` docs to `Providers` once you first need a toast.
+Add the `<Toaster />` container from the shadcn `sonner` docs to `Providers` once you first need a toast.
 
 ### 10.5 Forms (pattern)
 
