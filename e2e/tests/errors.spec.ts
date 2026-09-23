@@ -42,7 +42,7 @@ test.describe('Loading and recovery', () => {
     await planner.fill(TWO_DAY_WORKED_EXAMPLE_TRIP.input);
     await planner.submit();
 
-    await expect(page.getByTestId('error-banner')).toContainText(/planning server/i);
+    await expect(page.getByTestId('error-banner')).toContainText(/routing service is unavailable/i);
     await expect(page.getByTestId('error-retry')).toBeVisible();
     await expect(planner.dropoffLocation).toHaveValue(
       TWO_DAY_WORKED_EXAMPLE_TRIP.input.dropoff.label,

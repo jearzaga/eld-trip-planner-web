@@ -17,7 +17,7 @@ test.describe('Trip form', () => {
     });
     await page.route('**/api/trips/', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 400));
-      await route.fulfill({ status: 201, json: { id: 'trip-w6-preview' } });
+      await route.fulfill({ status: 201, json: { id: '65f0a1b2c3d4e5f6a7b8c9d0' } });
     });
   });
 
@@ -83,6 +83,6 @@ test.describe('Trip form', () => {
     await planner.submit();
 
     await expect(page.getByTestId('planning-loader')).toContainText('Routing your trip');
-    await expect(page).toHaveURL(/\/trips\/trip-w6-preview$/);
+    await expect(page).toHaveURL(/\/trips\/65f0a1b2c3d4e5f6a7b8c9d0$/);
   });
 });

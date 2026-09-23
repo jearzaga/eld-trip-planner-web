@@ -44,6 +44,9 @@ function getErrorMessage(error: unknown) {
     if (status === null || code === 'NETWORK_ERROR') {
       return 'We could not reach the planning server. Check your connection and try again.';
     }
+    if (code === 'PROVIDER_UNAVAILABLE') {
+      return 'The routing service is unavailable right now. Please try again.';
+    }
     if (status === 502 || status === 503) {
       return 'The planning server is still waking up. Please try again.';
     }
