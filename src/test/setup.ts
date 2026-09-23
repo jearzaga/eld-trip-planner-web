@@ -5,6 +5,14 @@ import { afterAll, afterEach, beforeAll } from 'vitest';
 
 import { server } from '@/test/server';
 
+class ResizeObserverMock implements ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+globalThis.ResizeObserver = ResizeObserverMock;
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   server.resetHandlers();

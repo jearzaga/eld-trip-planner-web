@@ -1,0 +1,8 @@
+import { render, type RenderOptions } from '@testing-library/react';
+import type { ReactElement } from 'react';
+
+import { TestProviders } from '@/test/providers';
+
+export function renderWithProviders(ui: ReactElement, options?: RenderOptions) {
+  return render(ui, { wrapper: TestProviders, ...options });
+}

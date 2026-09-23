@@ -5,6 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
 const rootDirectory = process.cwd();
 const apiDirectory = path.resolve(rootDirectory, process.env.API_DIR ?? '../eld-trip-planner-api');
 const productionWebUrl = process.env.E2E_BASE_URL;
+const localWebPort = Number(process.env.E2E_PORT ?? 5173);
+const localWebUrl = `http://localhost:${localWebPort}`;
 
 export default defineConfig({
   testDir: './tests',
@@ -13,7 +15,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: localWebUrl,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -57,9 +59,9 @@ export default defineConfig({
           timeout: 120_000,
         },
         {
-          command: 'npm run dev -- --port 5173 --strictPort',
+          command: `npm run dev -- --port ${localWebPort} --strictPort`,
           cwd: rootDirectory,
-          url: 'http://localhost:5173',
+          url: localWebUrl,
           env: { VITE_API_BASE_URL: 'http://localhost:8000/api' },
           reuseExistingServer: !process.env.CI,
         },

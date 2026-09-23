@@ -1,7 +1,22 @@
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
+import { WakeBanner } from '@/features/server-status/WakeBanner';
+import { useServerStatus } from '@/features/server-status/useServerStatus';
+import { planTrip } from '@/features/trip-form/api';
+import { TripForm } from '@/features/trip-form/TripForm';
+import { Map } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 export function PlannerPage() {
+  const navigate = useNavigate();
+  const serverStatus = useServerStatus();
+
   return (
     <section className="flex flex-col gap-8">
       <div className="flex max-w-2xl flex-col gap-2">
@@ -12,18 +27,10 @@ export function PlannerPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,25rem)_minmax(0,1fr)]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Trip details</CardTitle>
-            <CardDescription>
-              Your route, schedule, and log information will go here.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button type="button">Plan a trip</Button>
-          </CardContent>
-        </Card>
+      {serverStatus.showWakeBanner ? <WakeBanner /> : null}
+
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,27rem)_minmax(0,1fr)]">
+        <TripForm onSubmit={planTrip} onPlanned={(id) => navigate(`/trips/${id}`)} />
 
         <Card>
           <CardHeader>
@@ -33,7 +40,17 @@ export function PlannerPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground text-sm">No trip planned yet.</p>
+            <Empty className="min-h-64 border">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Map aria-hidden="true" />
+                </EmptyMedia>
+                <EmptyTitle>No trip planned yet</EmptyTitle>
+                <EmptyDescription>
+                  Complete the trip details to see the route, required stops, and daily logs.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           </CardContent>
         </Card>
       </div>
