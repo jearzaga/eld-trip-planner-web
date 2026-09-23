@@ -21,7 +21,7 @@
 | 4 | A3 | api | Log builder | 0.5 d | ✅ | John Doe golden; logs total 24 |
 | 5 | A4 | api | Geo services | 0.5 d | ⬜ | Adapters + fake provider |
 | 6 | A5 | api | API, persistence, contract | 0.75 d | ⬜ | Acceptance green + web `api-contract.spec.ts` green |
-| 6 | W5 | web | Contract sync | 0.25 d | ⬜ | Generated types + synced fixtures committed |
+| 6 | W5 | web | Contract sync | 0.25 d | 🟨 | Generated types + synced fixtures committed |
 | 7 | W6 | web | Trip form + server status | 0.5 d | ✅ | `trip-form.spec.ts` green |
 | 8 | W7 | web | Map, stops, summary, share link | 0.75 d | ✅ | `route-map`, `share-link` green |
 | 9 | W8 | web | Daily log sheets | 1 d | ✅ | `log-sheets`, `hos-scenarios` green |
@@ -68,7 +68,7 @@ Requires A0 (health endpoint + fake provider switch).
 | ID | Task | Test first | Status |
 |---|---|---|---|
 | W5-01 | Enable `api-contract.spec.ts` (outer loop for A5) | red until A5 is done → green | ⬜ |
-| W5-02 | `scripts/sync-contract.mjs` + `npm run sync-contract` (openapi.yaml → `schema.d.ts`; fixtures → `src/test/fixtures`, `e2e/fixtures/responses`) | `sync-contract.test.ts` (copies + generates) | ⬜ |
+| W5-02 | `scripts/sync-contract.mjs` + `npm run sync-contract` (openapi.yaml → `schema.d.ts`; fixtures → `src/test/fixtures`, `e2e/fixtures/responses`) | `sync-contract.test.ts` (copies + generates) | ✅ |
 | W5-03 | CI freshness check: sync against checked-out API, `git diff --exit-code` | CI fails on a stale fixture (verify once, then fix) | ⬜ |
 | W5-04 | MSW handlers serve synced fixtures (`POST /trips` → SC-2 etc.) | `handlers.test.ts` | ⬜ |
 
