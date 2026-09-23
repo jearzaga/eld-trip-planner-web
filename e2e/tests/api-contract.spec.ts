@@ -10,7 +10,6 @@ import pickupAtCurrent from '../fixtures/responses/sc7.json' with { type: 'json'
 import { apiUrl } from '../fixtures/api-url';
 import { ALL_SCENARIOS } from '../fixtures/scenarios';
 
-
 type TripResponseBody = {
   id?: string;
   error?: { code: string };

@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import type { TripPlan } from '../../src/features/trip-results/schema';
-import { previewTrip } from '../../src/test/previewTrip';
+import { findTripForRequest, type TripRequest } from '../../src/test/findTripForRequest';
 import shortDay from './responses/sc1.json' with { type: 'json' };
 import twoDay from './responses/sc2.json' with { type: 'json' };
 import cycleLimited from './responses/sc3.json' with { type: 'json' };
@@ -9,14 +9,7 @@ import cycleFull from './responses/sc4.json' with { type: 'json' };
 import crossCountry from './responses/sc5.json' with { type: 'json' };
 import unroutable from './responses/sc6.json' with { type: 'json' };
 import pickupAtCurrent from './responses/sc7.json' with { type: 'json' };
-import { ALL_SCENARIOS, ROUTABLE_SCENARIOS, type LocationInput } from './scenarios';
-
-type TripRequest = {
-  current: LocationInput;
-  pickup: LocationInput;
-  dropoff: LocationInput;
-  cycle_used_hrs: number;
-};
+import { ALL_SCENARIOS } from './scenarios';
 
 type MockTripApiOptions = {
   planningDelayMs?: number;
@@ -30,28 +23,14 @@ const geocodeLocations = Array.from(
   ).values(),
 );
 
-const canonicalTrips: Record<string, unknown> = {
-  'SC-1': shortDay,
-  'SC-2': twoDay,
-  'SC-3': cycleLimited,
-  'SC-4': cycleFull,
-  'SC-5': crossCountry,
-  'SC-7': pickupAtCurrent,
-};
+const canonicalTrips = [shortDay, twoDay, cycleLimited, cycleFull, crossCountry, pickupAtCurrent];
 
 export function tripForScenarioInput(input: TripRequest) {
-  const scenario = ROUTABLE_SCENARIOS.find(
-    ({ input: expected }) =>
-      input.current.label === expected.current.label &&
-      input.pickup.label === expected.pickup.label &&
-      input.dropoff.label === expected.dropoff.label &&
-      input.cycle_used_hrs === expected.cycle_used_hrs,
-  );
-  return scenario ? (canonicalTrips[scenario.specId] as TripPlan) : undefined;
+  return findTripForRequest(canonicalTrips, input) as TripPlan | undefined;
 }
 
 function johnDoeTrip() {
-  const trip = structuredClone(previewTrip) as unknown as TripPlan;
+  const trip = structuredClone(twoDay) as unknown as TripPlan;
   const log = trip.daily_logs[0];
   log.date = '2026-09-24';
   log.header.from = 'Richmond, VA';
@@ -107,13 +86,6 @@ export async function mockTripApi(page: Page, options: MockTripApiOptions = {}) 
   await page.route('**/api/trips/**', async (route) => {
     if (route.request().method() === 'POST') {
       const input = route.request().postDataJSON() as TripRequest;
-      if (input.pickup.label === 'Honolulu, HI' && input.dropoff.label === 'Anchorage, AK') {
-        await route.fulfill({
-          status: 422,
-          json: unroutable,
-        });
-        return;
-      }
       if (options.planningDelayMs) {
         await new Promise((resolve) => setTimeout(resolve, options.planningDelayMs));
       }
