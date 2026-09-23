@@ -1,0 +1,52 @@
+name: Web contract
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mongo:
+        image: mongo:8
+        ports:
+          - 27017:27017
+    env:
+      MONGODB_URI: mongodb://127.0.0.1:27017/
+      MONGODB_DB: eld_e2e
+      GEO_PROVIDER: fake
+      API_DIR: ./api
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: jearzaga/eld-trip-planner-api
+          ref: main
+          path: api
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: '3.12'
+      - run: uv sync
+        working-directory: api
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run sync-contract -- --api-dir ./api
+      - run: git diff --exit-code -- src/lib/api/openapi.yaml src/lib/api/schema.d.ts src/test/fixtures e2e/fixtures/responses
+      - run: test -z "$(git status --porcelain -- src/lib/api/openapi.yaml src/lib/api/schema.d.ts src/test/fixtures e2e/fixtures/responses)"
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e -- e2e/tests/api-contract.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: contract-playwright-report
+          path: playwright-report
