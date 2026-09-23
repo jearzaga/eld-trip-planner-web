@@ -15,8 +15,6 @@ import { searchLocations } from './api';
 import type { LocationOption } from './schema';
 import { useDebouncedValue } from './useDebouncedValue';
 
-export type { LocationOption } from './schema';
-
 type LocationAutocompleteProps = {
   field: 'current' | 'pickup' | 'dropoff';
   label: string;
@@ -34,7 +32,6 @@ export function LocationAutocomplete({
 }: LocationAutocompleteProps) {
   const [draftValue, setDraftValue] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1);
   const inputValue = value?.label ?? draftValue ?? '';
   const debouncedQuery = useDebouncedValue(inputValue.trim(), 300);
   const inputId = `location-${field}`;
@@ -49,7 +46,6 @@ export function LocationAutocomplete({
   function handleInputChange(nextValue: string) {
     setDraftValue(nextValue);
     setIsOpen(nextValue.trim().length >= 3);
-    setActiveIndex(-1);
     if (nextValue !== value?.label) onChange(undefined);
   }
 
@@ -72,19 +68,6 @@ export function LocationAutocomplete({
             onValueChange={handleInputChange}
             onFocus={() => setIsOpen(inputValue.trim().length >= 3)}
             onKeyDown={(event) => {
-              const results = locations.data ?? [];
-              if (event.key === 'ArrowDown' && results.length > 0) {
-                event.preventDefault();
-                setActiveIndex((current) => Math.min(current + 1, results.length - 1));
-              }
-              if (event.key === 'ArrowUp' && results.length > 0) {
-                event.preventDefault();
-                setActiveIndex((current) => Math.max(current - 1, 0));
-              }
-              if (event.key === 'Enter' && activeIndex >= 0 && results[activeIndex]) {
-                event.preventDefault();
-                handleSelect(results[activeIndex]);
-              }
               if (event.key === 'Escape') setIsOpen(false);
             }}
             placeholder="City, state, or address"
@@ -105,12 +88,11 @@ export function LocationAutocomplete({
                 ) : null}
                 {!locations.isFetching ? <CommandEmpty>No locations found.</CommandEmpty> : null}
                 <CommandGroup>
-                  {locations.data?.map((location, index) => (
+                  {locations.data?.map((location) => (
                     <CommandItem
                       key={`${location.lat}-${location.lng}-${location.label}`}
                       value={location.label}
                       data-testid="suggestion-item"
-                      className={activeIndex === index ? 'bg-muted' : undefined}
                       onSelect={() => handleSelect(location)}
                     >
                       {location.label}
