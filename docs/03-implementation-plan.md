@@ -15,10 +15,10 @@
 |---|---|---|---|---|---|---|
 | 1 | **A0** | api | Foundation + Render health deploy | 0.5 d | ✅ | `/api/health/` green locally and on Render (CI deferred) |
 | 1 | **W0** | web | Foundation + Vercel shell deploy | 0.5 d | 🟨 | Shell green locally and on Vercel (CI deferred) |
-| 2 | **W1** | web | **Playwright harness + all acceptance specs** | 0.5 d | 🟨 | `harness.spec.ts` green; every AC has a `fixme` spec (CI deferred) |
+| 2 | **W1** | web | **Playwright harness + all acceptance specs** | 0.5 d | ✅ | `harness.spec.ts` green; every AC has a `fixme` spec (CI deferred) |
 | 2 | **A1** | api | Acceptance tests (pytest, skipped) | 0.25 d | ✅ | SC-1…SC-7 collected |
-| 3 | A2 | api | HOS engine | 1 d | ⬜ | Goldens + property tests |
-| 4 | A3 | api | Log builder | 0.5 d | ⬜ | John Doe golden; logs total 24 |
+| 3 | A2 | api | HOS engine | 1 d | ✅ | Goldens + property tests |
+| 4 | A3 | api | Log builder | 0.5 d | ✅ | John Doe golden; logs total 24 |
 | 5 | A4 | api | Geo services | 0.5 d | ⬜ | Adapters + fake provider |
 | 6 | A5 | api | API, persistence, contract | 0.75 d | ⬜ | Acceptance green + web `api-contract.spec.ts` green |
 | 6 | W5 | web | Contract sync | 0.25 d | ⬜ | Generated types + synced fixtures committed |
