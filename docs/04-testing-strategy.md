@@ -192,9 +192,15 @@ jobs:
     env:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}             # Atlas SRV URI (repo secret); no Mongo container
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@v4                          # web repo
       - uses: actions/checkout@v4                          # API repo (public; use a PAT secret if private)
         with: { repository: <you>/eld-trip-planner-api, path: api, ref: main }
+=======
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with: { repository: jearzaga/eld-trip-planner-api, path: api, ref: main, token: ${{ secrets.API_REPO_TOKEN }} }
+>>>>>>> c524e49 (chore(contract): W5 sync browser fixtures and isolated checks)
       - uses: astral-sh/setup-uv@v6
       - run: uv sync
         working-directory: api

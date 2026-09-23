@@ -13,7 +13,9 @@ This checklist tracks the evidence needed for W11. The [product Definition of Do
 ## Required before final DoD sign-off
 
 - [x] API A5 published the trip and geocode endpoints, `openapi.yaml`, and SC-1…SC-7 response fixtures.
-- [ ] Finish W5: commit synced artifacts, confirm the live consumer-contract CI, and replace temporary browser mocks with synced fixtures.
+- [ ] Finish W5: confirm consumer-contract CI against the private API repository. Synced artifacts and browser fixtures are committed.
+- [ ] Add a read-only `API_REPO_TOKEN` Actions secret to the web repository so CI can check out the private API repository. It needs only repository contents access.
+- [ ] Resolve API-owned R-09/AC-25 gap: published SC-2 remarks have null reasons at several status changes.
 - [ ] Add the final Vercel app URL and Loom URL to both repository READMEs.
 - [ ] Confirm production and preview `VITE_API_BASE_URL` values and API CORS from the deployed browser (W10).
 - [ ] Enable and pass the real-provider `@smoke` test after deployment (W10).

@@ -2,7 +2,14 @@ import type { Page } from '@playwright/test';
 
 import type { TripPlan } from '../../src/features/trip-results/schema';
 import { previewTrip } from '../../src/test/previewTrip';
-import { ALL_SCENARIOS, type LocationInput } from './scenarios';
+import shortDay from './responses/sc1.json' with { type: 'json' };
+import twoDay from './responses/sc2.json' with { type: 'json' };
+import cycleLimited from './responses/sc3.json' with { type: 'json' };
+import cycleFull from './responses/sc4.json' with { type: 'json' };
+import crossCountry from './responses/sc5.json' with { type: 'json' };
+import unroutable from './responses/sc6.json' with { type: 'json' };
+import pickupAtCurrent from './responses/sc7.json' with { type: 'json' };
+import { ALL_SCENARIOS, ROUTABLE_SCENARIOS, type LocationInput } from './scenarios';
 
 type TripRequest = {
   current: LocationInput;
@@ -23,60 +30,24 @@ const geocodeLocations = Array.from(
   ).values(),
 );
 
-function setLogDays(trip: TripPlan, count: number) {
-  const seeds = trip.daily_logs;
-  trip.daily_logs = Array.from({ length: count }, (_, index) => {
-    const source = structuredClone(seeds[Math.min(index, seeds.length - 1)]);
-    const day = 24 + index;
-    return { ...source, day_number: index + 1, date: `2026-09-${String(day).padStart(2, '0')}` };
-  });
-  trip.summary.log_days = count;
-}
+const canonicalTrips: Record<string, unknown> = {
+  'SC-1': shortDay,
+  'SC-2': twoDay,
+  'SC-3': cycleLimited,
+  'SC-4': cycleFull,
+  'SC-5': crossCountry,
+  'SC-7': pickupAtCurrent,
+};
 
-function resequenceStops(trip: TripPlan) {
-  trip.stops = trip.stops.map((stop, index) => ({ ...stop, seq: index + 1 }));
-  trip.summary.stop_count = trip.stops.length;
-}
-
-function tripForRequest(input: TripRequest) {
-  const trip = structuredClone(previewTrip) as unknown as TripPlan;
-  trip.inputs.current = input.current;
-  trip.inputs.pickup = input.pickup;
-  trip.inputs.dropoff = input.dropoff;
-  trip.inputs.cycle_used_hrs = input.cycle_used_hrs;
-
-  if (input.cycle_used_hrs === 65) {
-    setLogDays(trip, 4);
-    trip.stops.unshift({
-      ...trip.stops[1],
-      type: 'restart_34',
-      label: 'Cycle restart near Columbus, OH',
-      duration_min: 2040,
-      status: 'OFF',
-    });
-  } else if (input.cycle_used_hrs === 70) {
-    setLogDays(trip, 2);
-    trip.stops.unshift({
-      ...trip.stops[1],
-      type: 'restart_34',
-      label: 'Starting-cycle restart in Richmond, VA',
-      duration_min: 2040,
-      status: 'OFF',
-    });
-  } else if (input.dropoff.label === 'Los Angeles, CA') {
-    setLogDays(trip, 5);
-    const fuel = trip.stops.find((stop) => stop.type === 'fuel')!;
-    trip.stops = [
-      ...trip.stops.filter((stop) => stop.type !== 'fuel'),
-      { ...fuel, label: 'Fuel stop near St. Louis, MO' },
-      { ...fuel, label: 'Fuel stop near Albuquerque, NM', lng: -106.6504, lat: 35.0844 },
-    ];
-  } else if (input.dropoff.label === 'Philadelphia, PA') {
-    setLogDays(trip, 1);
-  }
-
-  resequenceStops(trip);
-  return trip;
+export function tripForScenarioInput(input: TripRequest) {
+  const scenario = ROUTABLE_SCENARIOS.find(
+    ({ input: expected }) =>
+      input.current.label === expected.current.label &&
+      input.pickup.label === expected.pickup.label &&
+      input.dropoff.label === expected.dropoff.label &&
+      input.cycle_used_hrs === expected.cycle_used_hrs,
+  );
+  return scenario ? (canonicalTrips[scenario.specId] as TripPlan) : undefined;
 }
 
 function johnDoeTrip() {
@@ -121,8 +92,11 @@ function johnDoeTrip() {
 }
 
 export async function mockTripApi(page: Page, options: MockTripApiOptions = {}) {
-  let plannedTrip = structuredClone(previewTrip) as unknown as TripPlan;
+  let plannedTrip = twoDay as unknown as TripPlan;
 
+  await page.route('**/api/health/', (route) =>
+    route.fulfill({ status: 200, json: { status: 'ok' } }),
+  );
   await page.route('**/api/geocode/**', async (route) => {
     const query = new URL(route.request().url()).searchParams.get('q')?.toLowerCase() ?? '';
     const locations = geocodeLocations.filter((location) =>
@@ -136,19 +110,19 @@ export async function mockTripApi(page: Page, options: MockTripApiOptions = {}) 
       if (input.pickup.label === 'Honolulu, HI' && input.dropoff.label === 'Anchorage, AK') {
         await route.fulfill({
           status: 422,
-          json: {
-            error: {
-              code: 'ROUTE_NOT_FOUND',
-              message: 'No truck route could be found between the selected locations.',
-            },
-          },
+          json: unroutable,
         });
         return;
       }
       if (options.planningDelayMs) {
         await new Promise((resolve) => setTimeout(resolve, options.planningDelayMs));
       }
-      plannedTrip = tripForRequest(input);
+      const trip = tripForScenarioInput(input);
+      if (!trip) {
+        await route.fulfill({ status: 422, json: unroutable });
+        return;
+      }
+      plannedTrip = trip;
       await route.fulfill({ status: 201, json: plannedTrip });
       return;
     }

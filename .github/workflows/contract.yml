@@ -25,11 +25,20 @@ jobs:
       CI: 'true'
     steps:
       - uses: actions/checkout@v7
+      - name: Require private API checkout token
+        env:
+          API_REPO_TOKEN: ${{ secrets.API_REPO_TOKEN }}
+        run: |
+          if [ -z "$API_REPO_TOKEN" ]; then
+            echo 'Add a read-only API_REPO_TOKEN Actions secret to this web repository.'
+            exit 1
+          fi
       - uses: actions/checkout@v7
         with:
           repository: jearzaga/eld-trip-planner-api
           ref: main
           path: api
+          token: ${{ secrets.API_REPO_TOKEN }}
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: '3.12'
