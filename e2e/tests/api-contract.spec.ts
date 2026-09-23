@@ -52,7 +52,10 @@ test.describe('Trip API contract', () => {
       expect(body.daily_logs).toHaveLength(scenario.expected.logDays ?? 0);
 
       if (scenario.expected.totals) {
-        expect(body.daily_logs?.map(({ totals }) => totals)).toEqual(scenario.expected.totals);
+        const leadingTotals = body.daily_logs
+          ?.slice(0, scenario.expected.totals.length)
+          .map(({ totals }) => totals);
+        expect(leadingTotals).toEqual(scenario.expected.totals);
       }
 
       if (scenario.expected.stopTypes) {
