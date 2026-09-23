@@ -1,18 +1,19 @@
 import { Server } from 'lucide-react';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
 
 export function WakeBanner() {
   return (
-    <Alert data-testid="wake-banner" className="border-primary/20 bg-primary/5">
+    <Alert data-testid="wake-banner">
       <Server aria-hidden="true" />
-      <AlertTitle className="flex items-center gap-2">
-        Waking the planning server <Spinner />
-      </AlertTitle>
+      <AlertTitle>Waking up the server</AlertTitle>
       <AlertDescription>
-        The first request can take a moment. You can keep filling in the trip while it starts.
+        This can take about a minute on the free tier. Keep filling in the trip while it starts.
       </AlertDescription>
+      <AlertAction>
+        <Spinner aria-label="Waking server" />
+      </AlertAction>
     </Alert>
   );
 }

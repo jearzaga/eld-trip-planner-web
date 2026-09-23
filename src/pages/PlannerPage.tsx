@@ -10,12 +10,14 @@ import { WakeBanner } from '@/features/server-status/WakeBanner';
 import { useServerStatus } from '@/features/server-status/useServerStatus';
 import { planTrip } from '@/features/trip-form/api';
 import { TripForm } from '@/features/trip-form/TripForm';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Map } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 export function PlannerPage() {
   const navigate = useNavigate();
   const serverStatus = useServerStatus();
+  useDocumentTitle('Plan a trip');
 
   return (
     <section className="flex flex-col gap-8">

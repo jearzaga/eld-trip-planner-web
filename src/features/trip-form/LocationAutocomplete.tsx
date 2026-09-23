@@ -91,32 +91,35 @@ export function LocationAutocomplete({
             aria-invalid={Boolean(error)}
             aria-autocomplete="list"
           />
-          {isOpen && isSearchable ? (
-            <CommandList
-              data-testid={`suggestions-${field}`}
-              className="bg-popover absolute top-full z-20 mt-1 w-full rounded-lg border shadow-md"
-            >
-              {locations.isFetching ? (
-                <div className="text-muted-foreground px-3 py-4 text-center text-sm">
-                  Searching locations…
-                </div>
-              ) : null}
-              {!locations.isFetching ? <CommandEmpty>No locations found.</CommandEmpty> : null}
-              <CommandGroup>
-                {locations.data?.map((location, index) => (
-                  <CommandItem
-                    key={`${location.lat}-${location.lng}-${location.label}`}
-                    value={location.label}
-                    data-testid="suggestion-item"
-                    className={activeIndex === index ? 'bg-muted' : undefined}
-                    onSelect={() => handleSelect(location)}
-                  >
-                    {location.label}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          ) : null}
+          <CommandList
+            hidden={!isOpen || !isSearchable}
+            data-testid={`suggestions-${field}`}
+            className="bg-popover absolute top-full z-20 mt-1 w-full rounded-lg border shadow-md"
+          >
+            {isOpen && isSearchable ? (
+              <>
+                {locations.isFetching ? (
+                  <div className="text-muted-foreground px-3 py-4 text-center text-sm">
+                    Searching locations…
+                  </div>
+                ) : null}
+                {!locations.isFetching ? <CommandEmpty>No locations found.</CommandEmpty> : null}
+                <CommandGroup>
+                  {locations.data?.map((location, index) => (
+                    <CommandItem
+                      key={`${location.lat}-${location.lng}-${location.label}`}
+                      value={location.label}
+                      data-testid="suggestion-item"
+                      className={activeIndex === index ? 'bg-muted' : undefined}
+                      onSelect={() => handleSelect(location)}
+                    >
+                      {location.label}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </>
+            ) : null}
+          </CommandList>
         </Command>
       </div>
       <FieldDescription>Select a result so the route has exact coordinates.</FieldDescription>

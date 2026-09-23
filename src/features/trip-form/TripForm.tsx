@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ClipboardList, Sparkles } from 'lucide-react';
+import { ClipboardList, Sparkles, TriangleAlert } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -38,8 +38,16 @@ const timeZones = [
 ] as const;
 
 function getErrorMessage(error: unknown) {
-  if (typeof error === 'object' && error && 'message' in error) {
-    return String(error.message);
+  if (typeof error === 'object' && error) {
+    const status = 'status' in error ? error.status : undefined;
+    const code = 'code' in error ? error.code : undefined;
+    if (status === null || code === 'NETWORK_ERROR') {
+      return 'We could not reach the planning server. Check your connection and try again.';
+    }
+    if (status === 502 || status === 503) {
+      return 'The planning server is still waking up. Please try again.';
+    }
+    if ('message' in error) return String(error.message);
   }
   return 'The trip could not be planned. Please try again.';
 }
@@ -197,9 +205,21 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
 
           {isSubmitting ? <PlanningLoader /> : null}
           {submitError ? (
-            <Alert variant="destructive">
+            <Alert variant="destructive" data-testid="error-banner">
+              <TriangleAlert aria-hidden="true" />
               <AlertTitle>Planning failed</AlertTitle>
               <AlertDescription>{submitError}</AlertDescription>
+              <AlertAction>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  data-testid="error-retry"
+                  onClick={() => void submit()}
+                >
+                  Try again
+                </Button>
+              </AlertAction>
             </Alert>
           ) : null}
           {isReady ? (

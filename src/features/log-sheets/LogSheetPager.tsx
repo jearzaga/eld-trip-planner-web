@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { TripPlan } from '@/features/trip-results/schema';
 import { useUiStore } from '@/stores/ui-store';
 
@@ -98,6 +98,14 @@ export function LogSheetPager({ trip }: { trip: TripPlan }) {
               ))}
               <TabsTrigger value="all">All sheets</TabsTrigger>
             </TabsList>
+            {trip.daily_logs.map((log) => (
+              <TabsContent key={log.day_number} value={String(log.day_number)} forceMount>
+                <span className="sr-only">Showing the log sheet for day {log.day_number} below.</span>
+              </TabsContent>
+            ))}
+            <TabsContent value="all" forceMount>
+              <span className="sr-only">Showing every daily log sheet below.</span>
+            </TabsContent>
           </Tabs>
         </div>
 
