@@ -57,6 +57,7 @@ export default defineConfig({
             GEO_PROVIDER: 'fake',
             MONGODB_DB: 'eld_e2e',
             DJANGO_DEBUG: '1',
+            CORS_ALLOWED_ORIGINS: localWebUrl,
           },
           reuseExistingServer: !process.env.CI,
           timeout: 120_000,

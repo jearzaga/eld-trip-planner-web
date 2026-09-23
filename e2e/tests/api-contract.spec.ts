@@ -7,10 +7,9 @@ import cycleFull from '../fixtures/responses/sc4.json' with { type: 'json' };
 import crossCountry from '../fixtures/responses/sc5.json' with { type: 'json' };
 import unroutable from '../fixtures/responses/sc6.json' with { type: 'json' };
 import pickupAtCurrent from '../fixtures/responses/sc7.json' with { type: 'json' };
+import { apiUrl } from '../fixtures/api-url';
 import { ALL_SCENARIOS } from '../fixtures/scenarios';
 
-const apiUrl =
-  process.env.E2E_API_URL ?? `http://localhost:${process.env.E2E_API_PORT ?? 8000}/api`;
 
 type TripResponseBody = {
   id?: string;
