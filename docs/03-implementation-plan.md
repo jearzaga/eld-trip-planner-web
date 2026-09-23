@@ -25,7 +25,7 @@
 | 7 | W6 | web | Trip form + server status | 0.5 d | ✅ | `trip-form.spec.ts` green |
 | 8 | W7 | web | Map, stops, summary, share link | 0.75 d | ✅ | `route-map`, `share-link` green |
 | 9 | W8 | web | Daily log sheets | 1 d | ✅ | `log-sheets`, `hos-scenarios` green |
-| 10 | W9 | web | UX polish, errors, cold start, responsive, a11y | 0.5 d | ⬜ | `cold-start`, `errors`, `responsive`, `a11y` green |
+| 10 | W9 | web | UX polish, errors, cold start, responsive, a11y | 0.5 d | ✅ | `cold-start`, `errors`, `responsive`, `a11y` green |
 | 11 | A10 + W10 | both | Production (Render live providers + Vercel) + smoke | 0.5 d | ⬜ | `@smoke` green in production |
 | 12 | A11 + W11 | both | READMEs, Loom, submit | 0.5 d | ⬜ | Submitted |
 
@@ -122,12 +122,12 @@ Outer loop: enable `trip-form.spec.ts`.
 
 | ID | Task | Test first | Status |
 |---|---|---|---|
-| W9-01 | Enable `cold-start`, `errors`, `responsive`, `a11y` specs | red | ⬜ |
-| W9-02 | Cold-start flow: wait for health, 90 s timeout, one retry on 502/503 (AC-46) | `cold-start.spec.ts` | ⬜ |
-| W9-03 | Error banner + retry for 400/422/502/network | `errors.spec.ts` | ⬜ |
-| W9-04 | Responsive 375 / 768 / 1440 | `responsive.spec.ts` | ⬜ |
-| W9-05 | Axe fixes (labels, focus, contrast, landmarks, legend not color-only) | `a11y.spec.ts` | ⬜ |
-| W9-06 | Visual polish: type scale, spacing, tokens, empty state, favicon, titles | screenshots review | ⬜ |
+| W9-01 | Enable `cold-start`, `errors`, `responsive`, `a11y` specs | red | ✅ |
+| W9-02 | Cold-start flow: wait for health, 90 s timeout, one retry on 502/503 (AC-46) | `cold-start.spec.ts` | ✅ |
+| W9-03 | Error banner + retry for 400/422/502/network | `errors.spec.ts` | ✅ |
+| W9-04 | Responsive 375 / 768 / 1440 | `responsive.spec.ts` | ✅ |
+| W9-05 | Axe fixes (labels, focus, contrast, landmarks, legend not color-only) | `a11y.spec.ts` | ✅ |
+| W9-06 | Visual polish: type scale, spacing, tokens, empty state, favicon, titles | screenshots review | ✅ |
 | W9-07 | ⏭️ Dark mode | — | ⏭️ |
 
 **Gate:** all non-smoke specs green on desktop + mobile.

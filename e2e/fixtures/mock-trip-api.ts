@@ -11,6 +11,10 @@ type TripRequest = {
   cycle_used_hrs: number;
 };
 
+type MockTripApiOptions = {
+  planningDelayMs?: number;
+};
+
 const geocodeLocations = Array.from(
   new Map(
     ALL_SCENARIOS.flatMap(({ input }) => [input.current, input.pickup, input.dropoff]).map(
@@ -116,7 +120,7 @@ function johnDoeTrip() {
   return trip;
 }
 
-export async function mockTripApi(page: Page) {
+export async function mockTripApi(page: Page, options: MockTripApiOptions = {}) {
   let plannedTrip = structuredClone(previewTrip) as unknown as TripPlan;
 
   await page.route('**/api/geocode/**', async (route) => {
@@ -129,6 +133,21 @@ export async function mockTripApi(page: Page) {
   await page.route('**/api/trips/**', async (route) => {
     if (route.request().method() === 'POST') {
       const input = route.request().postDataJSON() as TripRequest;
+      if (input.pickup.label === 'Honolulu, HI' && input.dropoff.label === 'Anchorage, AK') {
+        await route.fulfill({
+          status: 422,
+          json: {
+            error: {
+              code: 'ROUTE_NOT_FOUND',
+              message: 'No truck route could be found between the selected locations.',
+            },
+          },
+        });
+        return;
+      }
+      if (options.planningDelayMs) {
+        await new Promise((resolve) => setTimeout(resolve, options.planningDelayMs));
+      }
       plannedTrip = tripForRequest(input);
       await route.fulfill({ status: 201, json: plannedTrip });
       return;

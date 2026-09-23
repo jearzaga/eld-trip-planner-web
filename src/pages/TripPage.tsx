@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, Copy, TriangleAlert } from 'lucide-react';
 import { useLocation, useParams } from 'react-router';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LogSheetPager } from '@/features/log-sheets/LogSheetPager';
@@ -11,6 +11,7 @@ import { StopsTimeline } from '@/features/stops/StopsTimeline';
 import { SummaryCards } from '@/features/summary/SummaryCards';
 import { formatDateTime } from '@/features/trip-results/format';
 import { useTrip } from '@/features/trip-results/useTrip';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useUiStore } from '@/stores/ui-store';
 
 function TripLoading() {
@@ -39,6 +40,9 @@ export function TripPage() {
   const [copied, setCopied] = useState(false);
   const selectStop = useUiStore((state) => state.selectStop);
   const { data: trip, error, isPending, refetch } = useTrip(id);
+  useDocumentTitle(
+    trip ? `${trip.inputs.current.label} to ${trip.inputs.dropoff.label}` : 'Trip plan',
+  );
 
   useEffect(() => {
     selectStop(null);
@@ -50,15 +54,22 @@ export function TripPage() {
 
   if (error || !trip) {
     return (
-      <Alert variant="destructive">
+      <Alert variant="destructive" data-testid="error-banner">
         <TriangleAlert aria-hidden="true" />
         <AlertTitle>Trip plan unavailable</AlertTitle>
         <AlertDescription>
           We could not load this saved trip. Check the link or try again.
         </AlertDescription>
-        <Button variant="outline" className="mt-3 w-fit" onClick={() => void refetch()}>
-          Try again
-        </Button>
+        <AlertAction>
+          <Button
+            variant="outline"
+            size="sm"
+            data-testid="error-retry"
+            onClick={() => void refetch()}
+          >
+            Try again
+          </Button>
+        </AlertAction>
       </Alert>
     );
   }

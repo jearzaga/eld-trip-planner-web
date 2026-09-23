@@ -68,4 +68,26 @@ describe('TripForm', () => {
     expect(await screen.findByText(/trip plan is ready/i)).toBeInTheDocument();
     expect(onPlanned).toHaveBeenCalledWith('trip-123');
   });
+
+  it('preserves the trip and offers a retry after planning fails', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi
+      .fn<() => Promise<{ id: string }>>()
+      .mockRejectedValueOnce({ status: 503, code: 'SERVER_UNAVAILABLE', message: 'Unavailable' })
+      .mockResolvedValueOnce({ id: 'trip-recovered' });
+    const onPlanned = vi.fn();
+    renderWithProviders(<TripForm onSubmit={onSubmit} onPlanned={onPlanned} />);
+
+    await user.click(screen.getByTestId('btn-sample-trip'));
+    await user.click(screen.getByTestId('btn-plan-trip'));
+
+    expect(await screen.findByTestId('error-banner')).toHaveTextContent(/server.*waking/i);
+    expect(screen.getByTestId('input-current')).toHaveValue('Richmond, VA');
+
+    await user.click(screen.getByTestId('error-retry'));
+
+    expect(onSubmit).toHaveBeenCalledTimes(2);
+    expect(await screen.findByText(/trip plan is ready/i)).toBeInTheDocument();
+    expect(onPlanned).toHaveBeenCalledWith('trip-recovered');
+  });
 });

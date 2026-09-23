@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { api } from '@/lib/api/client';
+import { api, type ApiError } from '@/lib/api/client';
 
 import { locationSchema, type LocationOption, type TripFormValues } from './schema';
 
@@ -13,6 +13,13 @@ export async function searchLocations(query: string): Promise<LocationOption[]> 
 }
 
 export async function planTrip(input: TripFormValues): Promise<{ id: string }> {
-  const response = await api.post('/trips/', input);
+  let response;
+  try {
+    response = await api.post('/trips/', input);
+  } catch (error) {
+    const status = (error as ApiError).status;
+    if (status !== null && status !== 502 && status !== 503) throw error;
+    response = await api.post('/trips/', input);
+  }
   return plannedTripSchema.parse(response.data);
 }
