@@ -37,6 +37,11 @@ export function Remarks({ log }: { log: DailyLog }) {
         </p>
         <p className="text-[0.65rem]">Shipper &amp; Commodity</p>
       </div>
+
+      <p className="text-center text-[0.7rem] font-semibold sm:col-span-2">
+        Enter name of place you reported and where released from work and when and where each change
+        of duty occurred. Use time standard of home terminal.
+      </p>
     </section>
   );
 }

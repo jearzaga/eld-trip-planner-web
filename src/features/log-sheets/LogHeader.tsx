@@ -37,11 +37,10 @@ export function LogHeader({ log }: { log: DailyLog }) {
           </p>
           <p className="mt-1 text-[0.65rem]">month / day / year</p>
         </div>
-        <p className="text-right text-[0.65rem] leading-relaxed">
-          Original — File at home terminal.
-          <br />
-          Duplicate — Driver retains in possession for 8 days.
-        </p>
+        <div className="text-right text-[0.65rem] leading-relaxed">
+          <p>Original - File at home terminal.</p>
+          <p>Duplicate - Driver retains in his/her possession for 8 days.</p>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -63,7 +62,7 @@ export function LogHeader({ log }: { log: DailyLog }) {
           />
           <div className="sm:col-span-2">
             <LabeledValue
-              label="Truck/Tractor and Trailer Numbers"
+              label="Truck/Tractor and Trailer Numbers or License Plate(s)/State (show each unit)"
               value={`${header.truck_tractor_no} / ${header.trailer_no}`}
               testId="log-vehicle-numbers"
             />
