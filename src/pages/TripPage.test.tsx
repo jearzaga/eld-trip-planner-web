@@ -26,6 +26,7 @@ describe('TripPage', () => {
 
     expect(screen.getByTestId('trip-loading')).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: /richmond.*kansas city/i })).toBeInTheDocument();
+    expect(screen.getAllByTestId('route-leg')).toHaveLength(twoDayTrip.route.legs.length);
 
     await user.click(screen.getByTestId('btn-copy-link'));
     expect(writeText).toHaveBeenCalledWith(expect.stringContaining(`/trips/${twoDayTrip.id}`));
