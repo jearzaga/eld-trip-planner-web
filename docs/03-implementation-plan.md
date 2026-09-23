@@ -16,7 +16,7 @@
 | 1 | **A0** | api | Foundation + Render health deploy | 0.5 d | 🟨 | `/api/health/` green locally, CI, Render |
 | 1 | **W0** | web | Foundation + Vercel shell deploy | 0.5 d | 🟨 | Shell green locally, CI, Vercel |
 | 2 | **W1** | web | **Playwright harness + all acceptance specs** | 0.5 d | ⬜ | `harness.spec.ts` green; every AC has a `fixme` spec; CI e2e job green |
-| 2 | **A1** | api | Acceptance tests (pytest, skipped) | 0.25 d | ⬜ | SC-1…SC-7 collected |
+| 2 | **A1** | api | Acceptance tests (pytest, skipped) | 0.25 d | ✅ | SC-1…SC-7 collected |
 | 3 | A2 | api | HOS engine | 1 d | ⬜ | Goldens + property tests |
 | 4 | A3 | api | Log builder | 0.5 d | ⬜ | John Doe golden; logs total 24 |
 | 5 | A4 | api | Geo services | 0.5 d | ⬜ | Adapters + fake provider |

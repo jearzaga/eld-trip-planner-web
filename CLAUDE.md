@@ -108,6 +108,9 @@ E2E_BASE_URL=https://<app>.vercel.app npm run e2e -- --project=smoke   # product
 - Prefer `getByRole` / `getByLabel` in tests; use `data-testid` for data regions.
 - `LogSheet` is a pure component of one `daily_log` object. Grid math: `x = left + (min / 1440) * width`.
 - Tailwind tokens for color/spacing; duty-status colors are shared by the map legend, timeline and log sheet.
+- **Descriptive names, never spec IDs.** Components, functions, variables and test titles say what they are or prove
+  (`draws a 34-hour restart across two sheets`, `cycleFullTrip`) — not `ac31`, `sc4Fixture`, `W8-03 test`. Cite the ID in a
+  comment above the test (`// SC-4 · AC-31`). `data-testid` values (§5 of the testing strategy) stay as they are.
 - Conventional commits with task IDs: `test(log-sheets): W8-03 failing test for duty path` → `feat(log-sheets): W8-03 …`.
 
 ## Task script
