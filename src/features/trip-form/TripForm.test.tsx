@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { TripForm } from '@/features/trip-form/TripForm';
@@ -24,7 +24,8 @@ describe('TripForm', () => {
     renderWithProviders(<TripForm onSubmit={vi.fn()} onPlanned={vi.fn()} />);
 
     await user.type(screen.getByTestId('input-current'), 'Part');
-    await user.click(screen.getByTestId('btn-sample-trip'));
+    // AC-05
+    await user.click(screen.getByRole('button', { name: 'Try a sample trip' }));
 
     expect(screen.getByTestId('input-current')).toHaveValue('Richmond, VA');
     expect(screen.getByTestId('input-pickup')).toHaveValue('Baltimore, MD');
@@ -65,8 +66,8 @@ describe('TripForm', () => {
     expect(screen.getByTestId('planning-loader')).toHaveTextContent(/routing your trip/i);
     resolvePlan?.({ id: 'trip-123' });
 
-    expect(await screen.findByText(/trip plan is ready/i)).toBeInTheDocument();
-    expect(onPlanned).toHaveBeenCalledWith('trip-123');
+    await waitFor(() => expect(onPlanned).toHaveBeenCalledWith('trip-123'));
+    expect(screen.queryByText(/trip plan is ready/i)).not.toBeInTheDocument();
   });
 
   it('preserves the trip and offers a retry after planning fails', async () => {
@@ -87,7 +88,32 @@ describe('TripForm', () => {
     await user.click(screen.getByTestId('error-retry'));
 
     expect(onSubmit).toHaveBeenCalledTimes(2);
-    expect(await screen.findByText(/trip plan is ready/i)).toBeInTheDocument();
-    expect(onPlanned).toHaveBeenCalledWith('trip-recovered');
+    await waitFor(() => expect(onPlanned).toHaveBeenCalledWith('trip-recovered'));
+  });
+
+  it('shows API validation errors on the fields they belong to', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn().mockRejectedValue({
+      status: 400,
+      code: 'VALIDATION_ERROR',
+      message: 'Invalid request.',
+      fields: {
+        'pickup.lat': ['Ensure this value is less than or equal to 90.'],
+        cycle_used_hrs: ['Must be between 0 and 70.'],
+        'log_meta.driver_name': ['This field may not be blank.'],
+      },
+    });
+    renderWithProviders(<TripForm onSubmit={onSubmit} onPlanned={vi.fn()} />);
+
+    await user.click(screen.getByTestId('btn-sample-trip'));
+    await user.click(screen.getByTestId('btn-plan-trip'));
+
+    expect(await screen.findByText('Must be between 0 and 70.')).toBeInTheDocument();
+    expect(screen.getByTestId('input-cycle-used')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByText('Ensure this value is less than or equal to 90.')).toBeInTheDocument();
+    expect(screen.getByTestId('input-pickup')).toHaveAttribute('aria-invalid', 'true');
+    await user.click(screen.getByTestId('log-details'));
+    expect(screen.getByLabelText(/driver name/i)).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByText('This field may not be blank.')).toBeInTheDocument();
   });
 });
