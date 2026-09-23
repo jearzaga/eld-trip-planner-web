@@ -180,6 +180,9 @@ and fails if `git diff` shows changes, which means the web repo is behind the AP
 
 ## 8. CI (`.github/workflows/ci.yml`)
 
+> ⏭️ **Deferred (2026-09-23).** The workflow is not in the repo; this section is the plan for when it returns (see
+> `03-implementation-plan.md` *Decision log*). Until then, run lint, typecheck, Vitest and Playwright locally before each PR.
+
 ```yaml
 jobs:
   unit:
