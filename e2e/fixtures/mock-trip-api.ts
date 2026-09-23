@@ -36,19 +36,25 @@ function johnDoeTrip() {
   log.header.from = 'Richmond, VA';
   log.header.to = 'Newark, NJ';
   log.segments = [
-    { status: 'OFF', start_min: 0, end_min: 360 },
-    { status: 'ON', start_min: 360, end_min: 450, note: 'Reported, loaded, pre-trip' },
-    { status: 'D', start_min: 450, end_min: 540 },
-    { status: 'ON', start_min: 540, end_min: 570, note: 'Fueled' },
-    { status: 'D', start_min: 570, end_min: 720 },
-    { status: 'OFF', start_min: 720, end_min: 780, note: 'Lunch' },
-    { status: 'D', start_min: 780, end_min: 900 },
-    { status: 'ON', start_min: 900, end_min: 930, note: 'Delivery' },
-    { status: 'D', start_min: 930, end_min: 960 },
-    { status: 'SB', start_min: 960, end_min: 1065, note: 'Sleeper berth' },
-    { status: 'D', start_min: 1065, end_min: 1140 },
-    { status: 'ON', start_min: 1140, end_min: 1260, note: 'Post-trip, paperwork' },
-    { status: 'OFF', start_min: 1260, end_min: 1440 },
+    { status: 'OFF', start_min: 0, end_min: 360, note: null, location: null },
+    {
+      status: 'ON',
+      start_min: 360,
+      end_min: 450,
+      note: 'Reported, loaded, pre-trip',
+      location: null,
+    },
+    { status: 'D', start_min: 450, end_min: 540, note: null, location: null },
+    { status: 'ON', start_min: 540, end_min: 570, note: 'Fueled', location: null },
+    { status: 'D', start_min: 570, end_min: 720, note: null, location: null },
+    { status: 'OFF', start_min: 720, end_min: 780, note: 'Lunch', location: null },
+    { status: 'D', start_min: 780, end_min: 900, note: null, location: null },
+    { status: 'ON', start_min: 900, end_min: 930, note: 'Delivery', location: null },
+    { status: 'D', start_min: 930, end_min: 960, note: null, location: null },
+    { status: 'SB', start_min: 960, end_min: 1065, note: 'Sleeper berth', location: null },
+    { status: 'D', start_min: 1065, end_min: 1140, note: null, location: null },
+    { status: 'ON', start_min: 1140, end_min: 1260, note: 'Post-trip, paperwork', location: null },
+    { status: 'OFF', start_min: 1260, end_min: 1440, note: null, location: null },
   ];
   log.totals = { OFF: 10, SB: 1.75, D: 7.75, ON: 4.5 };
   log.remarks = [

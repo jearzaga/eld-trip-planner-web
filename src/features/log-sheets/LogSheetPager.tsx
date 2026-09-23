@@ -100,7 +100,9 @@ export function LogSheetPager({ trip }: { trip: TripPlan }) {
             </TabsList>
             {trip.daily_logs.map((log) => (
               <TabsContent key={log.day_number} value={String(log.day_number)} forceMount>
-                <span className="sr-only">Showing the log sheet for day {log.day_number} below.</span>
+                <span className="sr-only">
+                  Showing the log sheet for day {log.day_number} below.
+                </span>
               </TabsContent>
             ))}
             <TabsContent value="all" forceMount>

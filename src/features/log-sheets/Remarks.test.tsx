@@ -31,7 +31,13 @@ describe('Remarks', () => {
   });
 
   it('does not show an empty reason separator for a published nullable remark', () => {
-    renderWithProviders(<Remarks log={log} />);
+    const logWithNullableReason = {
+      ...log,
+      remarks: log.remarks.map((remark, index) =>
+        index === 1 ? { ...remark, note: null } : remark,
+      ),
+    };
+    renderWithProviders(<Remarks log={logWithNullableReason} />);
 
     expect(screen.getAllByTestId('remark-item')[1]).toHaveTextContent('Richmond, VA');
     expect(screen.getAllByTestId('remark-item')[1]).not.toHaveTextContent('—');
