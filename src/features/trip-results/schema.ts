@@ -1,12 +1,14 @@
 import { z } from 'zod';
 
+import type { components } from '../../lib/api/schema';
+
 const locationSchema = z.object({
   label: z.string(),
   lat: z.number(),
   lng: z.number(),
 });
 
-const logMetaSchema = z.object({
+const logMetaFields = {
   driver_name: z.string(),
   co_driver_name: z.string(),
   carrier_name: z.string(),
@@ -16,7 +18,7 @@ const logMetaSchema = z.object({
   trailer_no: z.string(),
   shipping_doc_no: z.string(),
   shipper_commodity: z.string(),
-});
+};
 
 const dutyStatusSchema = z.enum(['OFF', 'SB', 'D', 'ON']);
 
@@ -28,21 +30,15 @@ const dailyLogSchema = z.object({
     to: z.string(),
     miles_driving_today: z.number(),
     total_mileage_today: z.number(),
-    carrier_name: z.string(),
-    main_office_address: z.string(),
-    home_terminal_address: z.string(),
-    truck_tractor_no: z.string(),
-    trailer_no: z.string(),
-    shipping_doc_no: z.string(),
-    shipper_commodity: z.string(),
+    ...logMetaFields,
   }),
   segments: z.array(
     z.object({
       status: dutyStatusSchema,
       start_min: z.number().min(0).max(1440),
       end_min: z.number().min(0).max(1440),
-      note: z.string().nullable().optional(),
-      location: z.string().nullable().optional(),
+      note: z.string().nullable(),
+      location: z.string().nullable(),
     }),
   ),
   totals: z.object({
@@ -77,7 +73,7 @@ export const tripPlanSchema = z.object({
     start_time: z.string(),
     home_timezone: z.string(),
     include_inspections: z.boolean(),
-    log_meta: logMetaSchema,
+    log_meta: z.object(logMetaFields).partial(),
   }),
   summary: z.object({
     total_miles: z.number(),
@@ -93,8 +89,8 @@ export const tripPlanSchema = z.object({
   }),
   route: z.object({
     geometry: z.object({
-      type: z.literal('LineString'),
-      coordinates: z.array(z.tuple([z.number(), z.number()])),
+      type: z.string(),
+      coordinates: z.array(z.array(z.number())),
     }),
     legs: z.array(
       z.object({
@@ -122,7 +118,9 @@ export const tripPlanSchema = z.object({
   daily_logs: z.array(dailyLogSchema),
 });
 
-export type TripPlan = z.infer<typeof tripPlanSchema>;
-export type TripStop = TripPlan['stops'][number];
-export type DailyLog = TripPlan['daily_logs'][number];
-export type DutyStatus = z.infer<typeof dutyStatusSchema>;
+type Schemas = components['schemas'];
+
+export type TripPlan = Schemas['TripResponse'];
+export type TripStop = Schemas['Stop'];
+export type DailyLog = Schemas['DailyLog'];
+export type DutyStatus = Schemas['DutyStatusEnum'];
