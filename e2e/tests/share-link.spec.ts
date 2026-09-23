@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
 
 import { ResultsPage } from '../pages/ResultsPage';
+import { mockTripApi } from '../fixtures/mock-trip-api';
 
 test.describe('Shareable trip', () => {
-  test.fixme('AC-45: a copied trip URL reloads the same saved plan', async ({ page, context }) => {
+  test('AC-45: a copied trip URL reloads the same saved plan', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await mockTripApi(page);
     const results = new ResultsPage(page);
     await results.goto('saved-trip-id');
     await results.copyLinkButton.click();

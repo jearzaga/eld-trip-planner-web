@@ -23,7 +23,7 @@
 | 6 | A5 | api | API, persistence, contract | 0.75 d | ⬜ | Acceptance green + web `api-contract.spec.ts` green |
 | 6 | W5 | web | Contract sync | 0.25 d | ⬜ | Generated types + synced fixtures committed |
 | 7 | W6 | web | Trip form + server status | 0.5 d | ✅ | `trip-form.spec.ts` green |
-| 8 | W7 | web | Map, stops, summary, share link | 0.75 d | ⬜ | `route-map`, `share-link` green |
+| 8 | W7 | web | Map, stops, summary, share link | 0.75 d | ✅ | `route-map`, `share-link` green |
 | 9 | W8 | web | Daily log sheets | 1 d | ⬜ | `log-sheets`, `hos-scenarios` green |
 | 10 | W9 | web | UX polish, errors, cold start, responsive, a11y | 0.5 d | ⬜ | `cold-start`, `errors`, `responsive`, `a11y` green |
 | 11 | A10 + W10 | both | Production (Render live providers + Vercel) + smoke | 0.5 d | ⬜ | `@smoke` green in production |
@@ -93,12 +93,12 @@ Outer loop: enable `trip-form.spec.ts`.
 
 | ID | Task | Test first | Status |
 |---|---|---|---|
-| W7-01 | Enable `route-map.spec.ts`, `share-link.spec.ts` | red | ⬜ |
-| W7-02 | `TripPage` with `useTrip`, skeletons | `TripPage.test.tsx` | ⬜ |
-| W7-03 | `SummaryCards` | `SummaryCards.test.tsx` | ⬜ |
-| W7-04 | `RouteMap`: polyline, fit bounds, typed SVG markers, `MapLegend` | `RouteMap.test.tsx` | ⬜ |
-| W7-05 | `StopsTimeline`: ordered, status colors, click → map flyTo + popup | `StopsTimeline.test.tsx` | ⬜ |
-| W7-06 | Copy share link | `share-link.spec.ts` | ⬜ |
+| W7-01 | Enable `route-map.spec.ts`, `share-link.spec.ts` | red | ✅ |
+| W7-02 | `TripPage` with `useTrip`, skeletons | `TripPage.test.tsx` | ✅ |
+| W7-03 | `SummaryCards` | `SummaryCards.test.tsx` | ✅ |
+| W7-04 | `RouteMap`: polyline, fit bounds, typed SVG markers, `MapLegend` | `RouteMap.test.tsx` | ✅ |
+| W7-05 | `StopsTimeline`: ordered, status colors, click → map flyTo + popup | `StopsTimeline.test.tsx` | ✅ |
+| W7-06 | Copy share link | `share-link.spec.ts` | ✅ |
 
 **Gate:** `route-map.spec.ts`, `share-link.spec.ts` green.
 
@@ -161,7 +161,7 @@ Outer loop: enable `trip-form.spec.ts`.
 | 2026-09-23 | Contract via committed `openapi.yaml` + fixtures; types generated with openapi-typescript | 04 §7 |
 | 2026-09-23 | Cold-start UX is an acceptance criterion (AC-46) | 02 §3 |
 | 2026-09-23 | **CI deferred (W0-05, W1-07; API A0-07).** No `.github/workflows/ci.yml` in either repo for now. Every run would connect to the shared Atlas cluster, and CI adds little while one person builds the foundation. Until it returns, run `npm run lint && npm run typecheck && npm run test:run && npm run e2e` locally before each PR. When re-added, the API side uses a throwaway MongoDB service container (`mongo:8`) instead of an Atlas secret | 04 §8 |
-| 2026-09-24 | W6 remains web-only while A5/W5 are pending: browser tests intercept geocode and trip creation with contract-shaped responses; replace them with synced fixtures during W5 | W5, W6 |
+| 2026-09-24 | W6–W7 remain web-only while A5/W5 are pending: browser tests intercept geocode and trip requests with contract-shaped responses; replace them with synced fixtures during W5 | W5, W6, W7 |
 
 ## Blockers / open questions
 
