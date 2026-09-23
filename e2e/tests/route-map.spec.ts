@@ -1,25 +1,27 @@
 import { expect, test } from '@playwright/test';
 
 import { TWO_DAY_WORKED_EXAMPLE_TRIP } from '../fixtures/scenarios';
+import { mockTripApi } from '../fixtures/mock-trip-api';
 import { PlannerPage } from '../pages/PlannerPage';
 import { ResultsPage } from '../pages/ResultsPage';
 
 test.describe('Route results', () => {
   test.beforeEach(async ({ page }) => {
+    await mockTripApi(page);
     const planner = new PlannerPage(page);
     await planner.goto();
     await planner.fill(TWO_DAY_WORKED_EXAMPLE_TRIP.input);
     await planner.submit();
   });
 
-  test.fixme('AC-10: the route line is drawn and fitted on the map', async ({ page }) => {
+  test('AC-10: the route line is drawn and fitted on the map', async ({ page }) => {
     const results = new ResultsPage(page);
 
     await expect(results.map).toBeVisible();
     await expect(results.routePolyline).toBeVisible();
   });
 
-  test.fixme('AC-11: the map distinguishes every stop type and explains them in a legend', async ({
+  test('AC-11: the map distinguishes every stop type and explains them in a legend', async ({
     page,
   }) => {
     const results = new ResultsPage(page);
@@ -36,7 +38,7 @@ test.describe('Route results', () => {
     await expect(page.getByTestId('marker-dropoff')).toBeVisible();
   });
 
-  test.fixme('AC-12: ordered stops show timing and focus the selected map marker', async ({
+  test('AC-12: ordered stops show timing and focus the selected map marker', async ({
     page,
   }) => {
     const results = new ResultsPage(page);
@@ -48,7 +50,7 @@ test.describe('Route results', () => {
     await expect(page.getByRole('dialog')).toBeVisible();
   });
 
-  test.fixme('AC-13: summary reports route, timing, sheets, and stops', async ({ page }) => {
+  test('AC-13: summary reports route, timing, sheets, and stops', async ({ page }) => {
     const results = new ResultsPage(page);
 
     await expect(results.totalMiles).not.toBeEmpty();
