@@ -7,13 +7,16 @@ import {
   ROUTABLE_SCENARIOS,
   TWO_DAY_WORKED_EXAMPLE_TRIP,
 } from '../fixtures/scenarios';
+import { mockTripApi } from '../fixtures/mock-trip-api';
 import { LogSheetsPage } from '../pages/LogSheetsPage';
 import { PlannerPage } from '../pages/PlannerPage';
 
 test.describe('Hours-of-service scenarios', () => {
-  test.fixme('AC-30: every routable scenario produces a complete compliant plan', async ({
-    page,
-  }) => {
+  test.beforeEach(async ({ page }) => {
+    await mockTripApi(page);
+  });
+
+  test('AC-30: every routable scenario produces a complete compliant plan', async ({ page }) => {
     for (const scenario of ROUTABLE_SCENARIOS) {
       const planner = new PlannerPage(page);
       await planner.goto();
@@ -25,7 +28,7 @@ test.describe('Hours-of-service scenarios', () => {
     }
   });
 
-  test.fixme('AC-31: high and full cycles produce required thirty-four-hour restarts', async ({
+  test('AC-31: high and full cycles produce required thirty-four-hour restarts', async ({
     page,
   }) => {
     for (const scenario of [CYCLE_LIMITED_TRIP, CYCLE_FULL_TRIP]) {
@@ -39,7 +42,7 @@ test.describe('Hours-of-service scenarios', () => {
     }
   });
 
-  test.fixme('AC-32: cross-country plans place fuel stops no more than one thousand miles apart', async ({
+  test('AC-32: cross-country plans place fuel stops no more than one thousand miles apart', async ({
     page,
   }) => {
     const planner = new PlannerPage(page);
@@ -51,9 +54,7 @@ test.describe('Hours-of-service scenarios', () => {
     await expect(fuelStops).toHaveCount(CROSS_COUNTRY_TRIP.expected.fuelCount ?? 0);
   });
 
-  test.fixme('AC-33: the two-day worked example matches its exact daily totals', async ({
-    page,
-  }) => {
+  test('AC-33: the two-day worked example matches its exact daily totals', async ({ page }) => {
     const planner = new PlannerPage(page);
     await planner.goto();
     await planner.fill(TWO_DAY_WORKED_EXAMPLE_TRIP.input);
@@ -69,9 +70,7 @@ test.describe('Hours-of-service scenarios', () => {
     }
   });
 
-  test.fixme('AC-34: the John Doe golden log renders its exact four status totals', async ({
-    page,
-  }) => {
+  test('AC-34: the John Doe golden log renders its exact four status totals', async ({ page }) => {
     await page.goto('/trips/john-doe-golden');
     const sheet = new LogSheetsPage(page).sheet(1);
 
@@ -81,9 +80,7 @@ test.describe('Hours-of-service scenarios', () => {
     await expect(sheet.getByTestId('total-ON')).toHaveText('4.5');
   });
 
-  test.fixme('AC-35: displayed log changes use quarter-hours in home-terminal time', async ({
-    page,
-  }) => {
+  test('AC-35: displayed log changes use quarter-hours in home-terminal time', async ({ page }) => {
     const planner = new PlannerPage(page);
     await planner.goto();
     await planner.fill(TWO_DAY_WORKED_EXAMPLE_TRIP.input);

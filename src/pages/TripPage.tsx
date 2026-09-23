@@ -4,8 +4,8 @@ import { useLocation, useParams } from 'react-router';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { LogSheetPager } from '@/features/log-sheets/LogSheetPager';
 import { RouteMap } from '@/features/route-map/RouteMap';
 import { StopsTimeline } from '@/features/stops/StopsTimeline';
 import { SummaryCards } from '@/features/summary/SummaryCards';
@@ -104,17 +104,7 @@ export function TripPage() {
         <StopsTimeline stops={trip.stops} timeZone={trip.summary.home_timezone} />
       </div>
 
-      <Card>
-        <CardHeader>
-          <h2 className="text-lg font-semibold">Daily logs</h2>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground text-sm">
-            {trip.summary.log_days} daily log {trip.summary.log_days === 1 ? 'sheet is' : 'sheets are'}{' '}
-            ready for the next view.
-          </p>
-        </CardContent>
-      </Card>
+      <LogSheetPager trip={trip} />
     </section>
   );
 }

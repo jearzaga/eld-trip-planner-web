@@ -1,0 +1,50 @@
+@page {
+  size: letter landscape;
+  margin: 0.25in;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-log-region,
+  .print-log-region * {
+    visibility: visible;
+  }
+
+  .print-log-region {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+  }
+
+  .print-log-card {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  [data-print-hidden],
+  .print-log-card > [data-slot='card-header'] {
+    display: none !important;
+  }
+
+  .print-log-card > [data-slot='card-content'] {
+    padding: 0 !important;
+  }
+
+  .log-sheet,
+  .log-sheet[hidden] {
+    display: block !important;
+    break-after: page;
+    max-width: none !important;
+    padding: 0.1in !important;
+    box-shadow: none !important;
+  }
+
+  .log-sheet:last-child {
+    break-after: auto;
+  }
+}
