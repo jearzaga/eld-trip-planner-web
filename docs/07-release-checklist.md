@@ -21,6 +21,7 @@ This checklist tracks the evidence needed for W11. The [product Definition of Do
 - [ ] Enable and pass the real-provider `@smoke` test after deployment (W10).
 - [x] Web unit CI passed its first pull request run (W0-05).
 - [ ] Add the deferred full UI E2E CI job with Linux visual snapshots and run all required checks on the final commits. Consumer-contract CI uses an isolated MongoDB service.
+- [ ] Confirm the web-only desktop/mobile Playwright job with synced fixtures passes on Linux; it does not replace the real-stack W1-07 gate.
 - [ ] Review every AC and deliverable in [01-definition-of-done.md](01-definition-of-done.md) against the integrated, hosted system.
 - [ ] Record the 3–5 minute Loom and submit the app, both repositories, and video.
 

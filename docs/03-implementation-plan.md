@@ -165,6 +165,7 @@ Outer loop: enable `trip-form.spec.ts`.
 | 2026-09-24 | W6–W8 remain web-only while A5/W5 are pending: browser tests intercept geocode and trip requests with contract-shaped responses; replace them with synced fixtures during W5 | W5, W6, W7, W8 |
 | 2026-09-24 | A4 and A5 backend tasks are published on API `main` at `47682a9`; A5-11 remains pending until the web consumer contract passes. The web contract CI uses an isolated MongoDB service, never the shared Atlas cluster | A4, A5, W5 |
 | 2026-09-24 | Browser scenario mocks now serve synced A5 fixtures. Web CI needs a read-only `API_REPO_TOKEN` because the API repository is private | W5 |
+| 2026-09-24 | W1-07 remains deferred as a real-stack gate while its separate web-only UI Playwright job is added. This job uses the synced browser fixtures; it does not replace the private-API consumer job or production smoke | W1-07 |
 
 ## Blockers / open questions
 
