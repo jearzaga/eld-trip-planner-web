@@ -24,7 +24,7 @@
 | 6 | W5 | web | Contract sync | 0.25 d | ⬜ | Generated types + synced fixtures committed |
 | 7 | W6 | web | Trip form + server status | 0.5 d | ✅ | `trip-form.spec.ts` green |
 | 8 | W7 | web | Map, stops, summary, share link | 0.75 d | ✅ | `route-map`, `share-link` green |
-| 9 | W8 | web | Daily log sheets | 1 d | ⬜ | `log-sheets`, `hos-scenarios` green |
+| 9 | W8 | web | Daily log sheets | 1 d | ✅ | `log-sheets`, `hos-scenarios` green |
 | 10 | W9 | web | UX polish, errors, cold start, responsive, a11y | 0.5 d | ⬜ | `cold-start`, `errors`, `responsive`, `a11y` green |
 | 11 | A10 + W10 | both | Production (Render live providers + Vercel) + smoke | 0.5 d | ⬜ | `@smoke` green in production |
 | 12 | A11 + W11 | both | READMEs, Loom, submit | 0.5 d | ⬜ | Submitted |
@@ -106,15 +106,15 @@ Outer loop: enable `trip-form.spec.ts`.
 
 | ID | Task | Test first | Status |
 |---|---|---|---|
-| W8-01 | Enable `log-sheets.spec.ts`, `hos-scenarios.spec.ts` | red | ⬜ |
-| W8-02 | `LogGrid`: header bar (Mid-night … Noon … Mid-night), 4 labeled rows, 15-min ticks, totals column | `LogGrid.test.tsx` | ⬜ |
-| W8-03 | Duty path from segments (John Doe fixture) | `LogGrid.test.tsx::path` | ⬜ |
-| W8-04 | `LogHeader` in template wording (date m/d/y, From/To, miles boxes, vehicle numbers, carrier, main office, home terminal) | `LogHeader.test.tsx` | ⬜ |
-| W8-05 | `Remarks`: brackets + angled "City, ST" labels + list; shipping documents block | `Remarks.test.tsx` | ⬜ |
-| W8-06 | `Recap` (70 Hour/8 Day A/B/C + 34-hr restart note) | `Recap.test.tsx` | ⬜ |
-| W8-07 | `LogSheetPager` (prev/next, day tabs, "all sheets") | `LogSheetPager.test.tsx` | ⬜ |
-| W8-08 | Print/PDF: `print.css`, one sheet per page | `log-sheets.spec.ts::print` | ⬜ |
-| W8-09 | Visual snapshot of SC-2 Day 1 | `log-sheets.spec.ts::visual` | ⬜ |
+| W8-01 | Enable `log-sheets.spec.ts`, `hos-scenarios.spec.ts` | red | ✅ |
+| W8-02 | `LogGrid`: header bar (Mid-night … Noon … Mid-night), 4 labeled rows, 15-min ticks, totals column | `LogGrid.test.tsx` | ✅ |
+| W8-03 | Duty path from segments (John Doe fixture) | `LogGrid.test.tsx::path` | ✅ |
+| W8-04 | `LogHeader` in template wording (date m/d/y, From/To, miles boxes, vehicle numbers, carrier, main office, home terminal) | `LogHeader.test.tsx` | ✅ |
+| W8-05 | `Remarks`: brackets + angled "City, ST" labels + list; shipping documents block | `Remarks.test.tsx` | ✅ |
+| W8-06 | `Recap` (70 Hour/8 Day A/B/C + 34-hr restart note) | `Recap.test.tsx` | ✅ |
+| W8-07 | `LogSheetPager` (prev/next, day tabs, "all sheets") | `LogSheetPager.test.tsx` | ✅ |
+| W8-08 | Print/PDF: `print.css`, one sheet per page | `log-sheets.spec.ts::print` | ✅ |
+| W8-09 | Visual snapshot of SC-2 Day 1 | `log-sheets.spec.ts::visual` | ✅ |
 
 **Gate:** `log-sheets.spec.ts` + `hos-scenarios.spec.ts` green; sheet matches the company template side by side.
 
@@ -161,7 +161,7 @@ Outer loop: enable `trip-form.spec.ts`.
 | 2026-09-23 | Contract via committed `openapi.yaml` + fixtures; types generated with openapi-typescript | 04 §7 |
 | 2026-09-23 | Cold-start UX is an acceptance criterion (AC-46) | 02 §3 |
 | 2026-09-23 | **CI deferred (W0-05, W1-07; API A0-07).** No `.github/workflows/ci.yml` in either repo for now. Every run would connect to the shared Atlas cluster, and CI adds little while one person builds the foundation. Until it returns, run `npm run lint && npm run typecheck && npm run test:run && npm run e2e` locally before each PR. When re-added, the API side uses a throwaway MongoDB service container (`mongo:8`) instead of an Atlas secret | 04 §8 |
-| 2026-09-24 | W6–W7 remain web-only while A5/W5 are pending: browser tests intercept geocode and trip requests with contract-shaped responses; replace them with synced fixtures during W5 | W5, W6, W7 |
+| 2026-09-24 | W6–W8 remain web-only while A5/W5 are pending: browser tests intercept geocode and trip requests with contract-shaped responses; replace them with synced fixtures during W5 | W5, W6, W7, W8 |
 
 ## Blockers / open questions
 
