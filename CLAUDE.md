@@ -33,7 +33,7 @@ all segments, totals, remarks and recap numbers come from the API. The frontend 
 | `docs/01-definition-of-done.md` | **Canonical** product acceptance criteria (AC-xx), traceability, task DoD |
 | `docs/02-architecture.md` | System overview, frontend structure, log-sheet rendering, Vercel deploy, cold-start UX |
 | `docs/03-implementation-plan.md` | **System progress overview** + web tasks (`W#-##`) with status — update as you work |
-| `docs/04-testing-strategy.md` | **Playwright-first** strategy, spec list, `data-testid` contract, config, cross-repo CI |
+| `docs/04-testing-strategy.md` | **Playwright-first** strategy, spec list, `data-testid` contract, config, local checks |
 | `docs/05-getting-started.md` | Workspace onboarding for both repos, schedule, TDD loop, Claude Code prompts |
 | `docs/06-project-setup.md` | Vite + React TS, Tailwind, shadcn/ui, libraries (state, API, forms, map, tests), config files |
 | `../eld-trip-planner-api/docs/01-business-rules.md` | **Canonical** HOS rules, glossary, worked example (read-only from here) |

@@ -20,8 +20,8 @@
 | 3 | A2 | api | HOS engine | 1 d | ✅ | Goldens + property tests |
 | 4 | A3 | api | Log builder | 0.5 d | ✅ | John Doe golden; logs total 24 |
 | 5 | A4 | api | Geo services | 0.5 d | ✅ | Adapters + fake provider |
-| 6 | A5 | api | API, persistence, contract | 0.75 d | 🟨 | Acceptance green + web `api-contract.spec.ts` green |
-| 6 | W5 | web | Contract sync | 0.25 d | 🟨 | Generated types + synced fixtures committed |
+| 6 | A5 | api | API, persistence, contract | 0.75 d | ✅ | Acceptance green + web `api-contract.spec.ts` green |
+| 6 | W5 | web | Contract sync | 0.25 d | ✅ | Generated types + synced fixtures committed |
 | 7 | W6 | web | Trip form + server status | 0.5 d | ✅ | `trip-form.spec.ts` green |
 | 8 | W7 | web | Map, stops, summary, share link | 0.75 d | ✅ | `route-map`, `share-link` green |
 | 9 | W8 | web | Daily log sheets | 1 d | ✅ | `log-sheets`, `hos-scenarios` green |
@@ -45,7 +45,7 @@ Never cut W1, A2, A3, W8.
 | W0-05 | ~~CI `unit` job~~ dropped: no CI, checks run locally | — | ⏭️ |
 | W0-06 | Vercel project from repo; `VITE_API_BASE_URL` = Render URL (from A0-08) | open the Vercel URL → shell renders | ⬜ |
 
-**Gate:** shell renders locally and on Vercel. CI is ⏭️ deferred (see *Decision log*).
+**Gate:** shell renders locally and on Vercel. No CI; checks run locally (see *Decision log*).
 
 ## W1 — Playwright harness + acceptance specs — **must finish before feature work**
 
@@ -61,13 +61,13 @@ Requires A0 (health endpoint + fake provider switch).
 | W1-06 | All acceptance specs as `test.fixme`, one test per AC: `api-contract`, `trip-form`, `route-map`, `share-link`, `log-sheets`, `hos-scenarios`, `cold-start`, `errors`, `responsive`, `a11y`, `smoke` | `npm run e2e -- --list` lists them all; run shows them skipped | ✅ |
 | W1-07 | ~~CI `e2e` job~~ dropped: no CI, `npm run e2e` runs locally | — | ⏭️ |
 
-**Gate:** harness green locally; every AC has a spec (CI deferred, see *Decision log*). → with A1, **unblocks feature work**.
+**Gate:** harness green locally; every AC has a spec (no CI, see *Decision log*). → with A1, **unblocks feature work**.
 
 ## W5 — Contract sync (runs when A5 lands)
 
 | ID | Task | Test first | Status |
 |---|---|---|---|
-| W5-01 | Enable `api-contract.spec.ts` (outer loop for A5) | red until A5 is done → green | 🟨 |
+| W5-01 | Enable `api-contract.spec.ts` (outer loop for A5) | red until A5 is done → green | ✅ |
 | W5-02 | `scripts/sync-contract.mjs` + `npm run sync-contract` (openapi.yaml → `schema.d.ts`; fixtures → `src/test/fixtures`, `e2e/fixtures/responses`) | `sync-contract.test.ts` (copies + generates) | ✅ |
 | W5-03 | Local freshness check: `npm run check-contract` (sync against sibling API, `git diff --exit-code`) | fails on a stale fixture | ✅ |
 | W5-04 | MSW handlers serve synced fixtures (`POST /trips` → SC-2 etc.) | `handlers.test.ts` | ✅ |
@@ -164,6 +164,7 @@ Outer loop: enable `trip-form.spec.ts`.
 | 2026-09-24 | W6–W8 remain web-only while A5/W5 are pending: browser tests intercept geocode and trip requests with contract-shaped responses; replace them with synced fixtures during W5 | W5, W6, W7, W8 |
 | 2026-09-24 | A4 and A5 backend tasks are published on API `main` at `47682a9`; A5-11 remains pending until the web consumer contract passes. | A4, A5, W5 |
 | 2026-09-24 | Browser scenario mocks now serve synced A5 fixtures | W5 |
+| 2026-09-24 | `api-contract.spec.ts` green against the sibling API closes W5-01 and A5-11 (A5 ✅). `full-system.spec.ts` plans and reloads a trip through the real API with no mocks | W5, A5 |
 | 2026-09-24 | **No CI pipelines** (unit, e2e, contract) in either repo. Contract freshness is checked locally with `npm run check-contract`; supersedes the CI deferral above | 04 §8 |
 
 ## Blockers / open questions

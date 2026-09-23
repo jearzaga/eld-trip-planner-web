@@ -92,8 +92,8 @@ Graders test the hosted app for HOS accuracy and judge UI/UX; strong design can 
 
 | ID | Criterion |
 |---|---|
-| **ENG-1** | Web CI: lint, typecheck, Vitest, and Playwright (desktop + mobile) against the sibling API checked out in CI with fake geo. |
-| **ENG-2** | API CI: ruff and pytest (unit, API, acceptance, contract). Coverage: `hos/` ≥ 95 %, overall ≥ 85 %. |
+| **ENG-1** | Web local checks green before each PR: `npm run lint && npm run typecheck && npm run test:run && npm run check-contract && npm run e2e` (Playwright desktop + mobile against the sibling API with fake geo). |
+| **ENG-2** | API local checks green before each PR: `uv run ruff check . && uv run pytest` (unit, API, acceptance, contract). Coverage: `hos/` ≥ 95 %, overall ≥ 85 %. |
 | **ENG-3** | **Contract sync:** `openapi.yaml` and scenario fixtures are committed in the API repo and fresh; the web repo's generated types are up to date; `api-contract.spec.ts` is green. |
 | **ENG-4** | No secrets in either repo. CORS allows only the Vercel origins. |
 | **ENG-5** | `@smoke` is green against production (Vercel + Render) after the final deploy. |
@@ -145,7 +145,7 @@ A task is ✅ only when:
 | AC-40, 41 | — | web: `e2e/tests/responsive.spec.ts` |
 | AC-42, 43 | — | web: `e2e/tests/errors.spec.ts`, component tests |
 | AC-44 | — | web: `e2e/tests/a11y.spec.ts` |
-| AC-45 | — | web: `e2e/tests/share-link.spec.ts` · api: `tests/api/test_trips_retrieve.py` |
-| AC-46 | — | web: `e2e/tests/cold-start.spec.ts` (delayed health via `page.route`) |
+| AC-45 | — | web: `e2e/tests/share-link.spec.ts`, `e2e/tests/full-system.spec.ts` (real API) · api: `tests/api/test_trips_retrieve.py` |
+| AC-46 | — | web: `e2e/tests/cold-start.spec.ts` (delayed health, one 503 retried via `page.route`) |
 | ENG-3 | — | api: `tests/contract/*` · web: `e2e/tests/api-contract.spec.ts` |
 | DEL-1, ENG-5 | — | web: `e2e/tests/smoke.spec.ts` (`@smoke`) |
