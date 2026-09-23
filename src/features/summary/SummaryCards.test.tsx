@@ -2,12 +2,12 @@ import { screen } from '@testing-library/react';
 
 import { SummaryCards } from '@/features/summary/SummaryCards';
 import { tripPlanSchema } from '@/features/trip-results/schema';
-import { previewTrip } from '@/test/previewTrip';
+import twoDayTrip from '@/test/fixtures/sc2.json';
 import { renderWithProviders } from '@/test/render';
 
 describe('SummaryCards', () => {
   it('renders the route totals supplied by the trip response', () => {
-    renderWithProviders(<SummaryCards trip={tripPlanSchema.parse(previewTrip)} />);
+    renderWithProviders(<SummaryCards trip={tripPlanSchema.parse(twoDayTrip)} />);
 
     expect(screen.getByTestId('summary-total-miles')).toHaveTextContent('1,200 mi');
     expect(screen.getByTestId('summary-driving-hrs')).toHaveTextContent('20 h');

@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 
 import { RouteMap } from '@/features/route-map/RouteMap';
 import { tripPlanSchema } from '@/features/trip-results/schema';
-import { previewTrip } from '@/test/previewTrip';
+import twoDayTrip from '@/test/fixtures/sc2.json';
 import { renderWithProviders } from '@/test/render';
 
 vi.mock('react-leaflet', () => ({
@@ -26,7 +26,7 @@ vi.mock('react-leaflet', () => ({
 
 describe('RouteMap', () => {
   it('renders the route, typed markers, and complete legend', () => {
-    renderWithProviders(<RouteMap trip={tripPlanSchema.parse(previewTrip)} />);
+    renderWithProviders(<RouteMap trip={tripPlanSchema.parse(twoDayTrip)} />);
 
     expect(screen.getByTestId('route-polyline')).toBeInTheDocument();
     expect(screen.getByTestId('marker-start')).toBeInTheDocument();

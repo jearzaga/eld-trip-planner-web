@@ -4,20 +4,20 @@ import { delay, http, HttpResponse } from 'msw';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 
 import { TripPage } from '@/pages/TripPage';
-import { previewTrip } from '@/test/previewTrip';
+import twoDayTrip from '@/test/fixtures/sc2.json';
 import { renderWithProviders } from '@/test/render';
 import { server } from '@/test/server';
 
 describe('TripPage', () => {
   it('shows result skeletons, loads the saved trip, and copies its URL', async () => {
     server.use(
-      http.get('http://localhost:8000/api/trips/trip-w7-preview/', async () => {
+      http.get(`http://localhost:8000/api/trips/${twoDayTrip.id}/`, async () => {
         await delay(50);
-        return HttpResponse.json(previewTrip);
+        return HttpResponse.json(twoDayTrip);
       }),
     );
     const router = createMemoryRouter([{ path: '/trips/:id', element: <TripPage /> }], {
-      initialEntries: ['/trips/trip-w7-preview'],
+      initialEntries: [`/trips/${twoDayTrip.id}`],
     });
     const user = userEvent.setup();
     const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
@@ -28,6 +28,6 @@ describe('TripPage', () => {
     expect(await screen.findByRole('heading', { name: /richmond.*kansas city/i })).toBeInTheDocument();
 
     await user.click(screen.getByTestId('btn-copy-link'));
-    expect(writeText).toHaveBeenCalledWith(expect.stringContaining('/trips/trip-w7-preview'));
+    expect(writeText).toHaveBeenCalledWith(expect.stringContaining(`/trips/${twoDayTrip.id}`));
   });
 });
