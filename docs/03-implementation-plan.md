@@ -13,9 +13,9 @@
 
 | Order | Phase | Repo | Name | Est. | Status | Gate |
 |---|---|---|---|---|---|---|
-| 1 | **A0** | api | Foundation + Render health deploy | 0.5 d | 🟨 | `/api/health/` green locally, CI, Render |
-| 1 | **W0** | web | Foundation + Vercel shell deploy | 0.5 d | 🟨 | Shell green locally, CI, Vercel |
-| 2 | **W1** | web | **Playwright harness + all acceptance specs** | 0.5 d | ⬜ | `harness.spec.ts` green; every AC has a `fixme` spec; CI e2e job green |
+| 1 | **A0** | api | Foundation + Render health deploy | 0.5 d | ✅ | `/api/health/` green locally and on Render (CI deferred) |
+| 1 | **W0** | web | Foundation + Vercel shell deploy | 0.5 d | 🟨 | Shell green locally and on Vercel (CI deferred) |
+| 2 | **W1** | web | **Playwright harness + all acceptance specs** | 0.5 d | 🟨 | `harness.spec.ts` green; every AC has a `fixme` spec (CI deferred) |
 | 2 | **A1** | api | Acceptance tests (pytest, skipped) | 0.25 d | ✅ | SC-1…SC-7 collected |
 | 3 | A2 | api | HOS engine | 1 d | ⬜ | Goldens + property tests |
 | 4 | A3 | api | Log builder | 0.5 d | ⬜ | John Doe golden; logs total 24 |
@@ -38,14 +38,14 @@ Never cut W1, A2, A3, W8.
 
 | ID | Task | Test first | Status |
 |---|---|---|---|
-| W0-01 | Create GitHub repo `eld-trip-planner-web` (public); add `CLAUDE.md`, `README.md`, `docs/` | — | ⬜ |
+| W0-01 | Create GitHub repo `eld-trip-planner-web` (public); add `CLAUDE.md`, `README.md`, `docs/` | — | ✅ |
 | W0-02 | Per `06-project-setup.md`: Vite React-TS; Tailwind v4; `@/` alias; shadcn/ui init + components; react-router, TanStack Query, Zustand, axios, react-hook-form + zod, react-leaflet, date-fns; Vitest + RTL + MSW; scripts | `src/App.test.tsx` renders | ✅ |
-| W0-03 | App shell: providers, router, header "ELD Trip Planner", empty planner layout; axios `lib/api/client.ts` (base URL, 90 s timeout, error normalization); `stores/ui-store.ts` | `App.test.tsx` heading; `client.test.ts` error normalization | ⬜ |
+| W0-03 | App shell: providers, router, header "ELD Trip Planner", empty planner layout; axios `lib/api/client.ts` (base URL, 90 s timeout, error normalization); `stores/ui-store.ts` | `App.test.tsx` heading; `client.test.ts` error normalization | ✅ |
 | W0-04 | `vercel.json` SPA rewrite | — | ⬜ |
-| W0-05 | CI `unit` job: lint, typecheck, vitest | push → green | ⬜ |
+| W0-05 | CI `unit` job: lint, typecheck, vitest | push → green | ⏭️ |
 | W0-06 | Vercel project from repo; `VITE_API_BASE_URL` = Render URL (from A0-08) | open the Vercel URL → shell renders | ⬜ |
 
-**Gate:** shell renders locally and on Vercel; CI green.
+**Gate:** shell renders locally and on Vercel. CI is ⏭️ deferred (see *Decision log*).
 
 ## W1 — Playwright harness + acceptance specs — **must finish before feature work**
 
@@ -53,15 +53,15 @@ Requires A0 (health endpoint + fake provider switch).
 
 | ID | Task | Test first | Status |
 |---|---|---|---|
-| W1-01 | Install `@playwright/test`, `@axe-core/playwright`, `openapi-typescript`; `npx playwright install chromium`; scripts `e2e`, `e2e:ui` | — | ⬜ |
-| W1-02 | `e2e/playwright.config.ts` per `04-testing-strategy.md` §6 (boots sibling API via `API_DIR` + Vite; desktop + mobile; smoke mode) | — | ⬜ |
-| W1-03 | `harness.spec.ts`: shell loads + API health ok | red until wiring works → green | ⬜ |
-| W1-04 | Page objects `PlannerPage`, `ResultsPage`, `LogSheetsPage` (selectors from the test-ID contract) | — | ⬜ |
-| W1-05 | `e2e/fixtures/scenarios.ts` (SC-1…SC-7 inputs + expectations) | — | ⬜ |
-| W1-06 | All acceptance specs as `test.fixme`, one test per AC: `api-contract`, `trip-form`, `route-map`, `share-link`, `log-sheets`, `hos-scenarios`, `cold-start`, `errors`, `responsive`, `a11y`, `smoke` | `npm run e2e -- --list` lists them all; run shows them skipped | ⬜ |
-| W1-07 | CI `e2e` job: Mongo service, checkout API repo into `./api`, uv + node, Playwright; report artifact on failure; `repository_dispatch` + nightly triggers | CI green (harness only) | ⬜ |
+| W1-01 | Install `@playwright/test`, `@axe-core/playwright`, `openapi-typescript`; `npx playwright install chromium`; scripts `e2e`, `e2e:ui` | — | ✅ |
+| W1-02 | `e2e/playwright.config.ts` per `04-testing-strategy.md` §6 (boots sibling API via `API_DIR` + Vite; desktop + mobile; smoke mode) | — | ✅ |
+| W1-03 | `harness.spec.ts`: shell loads + API health ok | red until wiring works → green | ✅ |
+| W1-04 | Page objects `PlannerPage`, `ResultsPage`, `LogSheetsPage` (selectors from the test-ID contract) | — | ✅ |
+| W1-05 | `e2e/fixtures/scenarios.ts` (SC-1…SC-7 inputs + expectations) | — | ✅ |
+| W1-06 | All acceptance specs as `test.fixme`, one test per AC: `api-contract`, `trip-form`, `route-map`, `share-link`, `log-sheets`, `hos-scenarios`, `cold-start`, `errors`, `responsive`, `a11y`, `smoke` | `npm run e2e -- --list` lists them all; run shows them skipped | ✅ |
+| W1-07 | CI `e2e` job: Atlas via `MONGODB_URI`, checkout API repo into `./api`, uv + node, Playwright; report artifact on failure; `repository_dispatch` + nightly triggers | CI green (harness only) | ⏭️ |
 
-**Gate:** harness green locally + CI; every AC has a spec. → with A1, **unblocks feature work**.
+**Gate:** harness green locally; every AC has a spec (CI deferred, see *Decision log*). → with A1, **unblocks feature work**.
 
 ## W5 — Contract sync (runs when A5 lands)
 
@@ -160,6 +160,7 @@ Outer loop: enable `trip-form.spec.ts`.
 | 2026-09-23 | Playwright E2E lives in the web repo and boots the sibling API; the API repo has pytest acceptance tests | 04 §1 |
 | 2026-09-23 | Contract via committed `openapi.yaml` + fixtures; types generated with openapi-typescript | 04 §7 |
 | 2026-09-23 | Cold-start UX is an acceptance criterion (AC-46) | 02 §3 |
+| 2026-09-23 | **CI deferred (W0-05, W1-07; API A0-07).** No `.github/workflows/ci.yml` in either repo for now. Every run would connect to the shared Atlas cluster, and CI adds little while one person builds the foundation. Until it returns, run `npm run lint && npm run typecheck && npm run test:run && npm run e2e` locally before each PR. When re-added, the API side uses a throwaway MongoDB service container (`mongo:8`) instead of an Atlas secret | 04 §8 |
 
 ## Blockers / open questions
 

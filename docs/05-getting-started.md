@@ -91,7 +91,7 @@ npx playwright show-report
 
 3. Page objects + `e2e/fixtures/scenarios.ts`.
 4. Every acceptance spec as `test.fixme('AC-xx: …')`. Check with `npm run e2e -- --list`.
-5. CI `e2e` job (checks out the API repo into `./api`). Then do **A1** in the API repo (pytest acceptance tests, skipped).
+5. CI `e2e` job (checks out the API repo into `./api`) — ⏭️ deferred, see `03-implementation-plan.md` *Decision log*. Then do **A1** in the API repo (pytest acceptance tests, skipped).
 
 **W1 + A1 ✅ → feature work begins.**
 
