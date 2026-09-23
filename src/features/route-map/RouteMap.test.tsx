@@ -20,7 +20,7 @@ vi.mock('react-leaflet', () => ({
   ),
   Polyline: forwardRef(() => <div data-testid="route-polyline" />),
   Popup: ({ children }: { children: ReactNode }) => <>{children}</>,
-  TileLayer: () => null,
+  TileLayer: ({ url }: { url: string }) => <div data-testid="tile-layer" data-url={url} />,
   useMap: () => ({ fitBounds: vi.fn(), flyTo: vi.fn() }),
 }));
 
@@ -32,6 +32,26 @@ describe('RouteMap', () => {
     expect(screen.getByTestId('marker-start')).toBeInTheDocument();
     expect(screen.getByTestId('marker-pickup')).toBeInTheDocument();
     expect(screen.getByTestId('marker-dropoff')).toBeInTheDocument();
-    expect(screen.getAllByTestId('map-legend').at(-1)).toHaveTextContent('34-hour restart');
+    expect(screen.getByTestId('map-legend')).toHaveTextContent(
+      /Start.*Pickup.*Drop-off.*Fuel.*30-minute break.*10-hour rest.*34-hour restart/,
+    );
+  });
+
+  it('loads the standard OpenStreetMap tiles', () => {
+    renderWithProviders(<RouteMap trip={tripPlanSchema.parse(twoDayTrip)} />);
+
+    expect(screen.getByTestId('tile-layer')).toHaveAttribute(
+      'data-url',
+      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    );
+  });
+
+  it('describes each stop in its marker popup without a dialog role', () => {
+    renderWithProviders(<RouteMap trip={tripPlanSchema.parse(twoDayTrip)} />);
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByText('near Dayton, OH').parentElement).toHaveTextContent(
+      /near Dayton, OH.*30-minute break.*Stop duration: 30 min/,
+    );
   });
 });
