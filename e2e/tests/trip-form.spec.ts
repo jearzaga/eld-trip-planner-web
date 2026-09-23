@@ -61,6 +61,7 @@ test.describe('Trip form', () => {
   test('AC-05: sample trip fills a known multi-day route', async ({ page }) => {
     const planner = new PlannerPage(page);
     await planner.goto();
+    await expect(planner.sampleTripButton).toHaveText('Try a sample trip');
     await planner.sampleTripButton.click();
 
     await expect(planner.currentLocation).toHaveValue(
