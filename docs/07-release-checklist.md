@@ -17,7 +17,7 @@ This checklist tracks the evidence needed for W11. The [product Definition of Do
 - [ ] Add the final Vercel app URL and Loom URL to both repository READMEs.
 - [ ] Confirm production and preview `VITE_API_BASE_URL` values and API CORS from the deployed browser (W10).
 - [ ] Enable and pass the real-provider `@smoke` test after deployment (W10).
-- [ ] Revisit the deferred CI decision for ENG-1 and run the required checks on the final commits.
+- [ ] Confirm the unit CI job is green, add the deferred E2E CI job with Linux visual snapshots, and run all required checks on the final commits.
 - [ ] Review every AC and deliverable in [01-definition-of-done.md](01-definition-of-done.md) against the integrated, hosted system.
 - [ ] Record the 3–5 minute Loom and submit the app, both repositories, and video.
 

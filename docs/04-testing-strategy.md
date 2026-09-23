@@ -178,30 +178,28 @@ test.describe('Daily log sheets', () => {
 Commit the results with `chore(contract): sync from api@<short-sha>`. Web CI re-runs the sync against the checked-out API
 and fails if `git diff` shows changes, which means the web repo is behind the API.
 
-## 8. CI (`.github/workflows/ci.yml`)
+## 8. CI
 
-> ⏭️ **Deferred (2026-09-23).** The workflow is not in the repo; this section is the plan for when it returns (see
-> `03-implementation-plan.md` *Decision log*). Until then, run lint, typecheck, Vitest and Playwright locally before each PR.
+The web-only `unit` job in `.github/workflows/unit.yml` runs lint, typecheck, Vitest and build on pull requests and pushes to main. It does not start the API or access Atlas. Playwright CI remains deferred until A5 publishes the contract and Linux visual snapshots are approved. Run Playwright locally before each PR until that job is added.
+
+The planned E2E job will use a throwaway MongoDB service container, check out the public API repository, sync the published contract, and upload the Playwright report on failure. It must not use the shared Atlas cluster.
 
 ```yaml
 jobs:
-  unit:
-    steps: checkout → setup-node 22 → npm ci → lint → typecheck → vitest
   e2e:
-    needs: unit
     env:
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}             # Atlas SRV URI (repo secret); no Mongo container
+      MONGODB_URI: mongodb://localhost:27017/
     steps:
-      - uses: actions/checkout@v4                          # web repo
-      - uses: actions/checkout@v4                          # API repo (public; use a PAT secret if private)
-        with: { repository: <you>/eld-trip-planner-api, path: api, ref: main }
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with: { repository: jearzaga/eld-trip-planner-api, path: api, ref: main }
       - uses: astral-sh/setup-uv@v6
       - run: uv sync
         working-directory: api
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: npm }
       - run: npm ci
-      - run: npm run sync-contract -- --api-dir ./api && git diff --exit-code   # contract freshness
+      - run: npm run sync-contract -- --api-dir ./api && git diff --exit-code
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
         env: { API_DIR: ./api, CI: 'true' }
@@ -211,8 +209,8 @@ jobs:
 on:
   push: { branches: [main] }
   pull_request:
-  repository_dispatch: { types: [api-updated] }   # fired by the API repo after it pushes to main (optional)
-  schedule: [{ cron: '0 22 * * *' }]             # nightly: catches API changes even without dispatch
+  repository_dispatch: { types: [api-updated] }
+  schedule: [{ cron: '0 22 * * *' }]
 ```
 
 After each production deploy:

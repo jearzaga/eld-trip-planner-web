@@ -83,7 +83,7 @@ eld-trip-planner-web/
 │  └─ fixtures/     # scenarios.ts + synced API responses
 ├─ scripts/sync-contract.mjs
 ├─ docs/
-└─ .github/workflows/ci.yml   # ⏭️ deferred, not in the repo yet
+└─ .github/workflows/unit.yml # lint, typecheck, Vitest, build; E2E CI deferred
 ```
 
 ## Commands
