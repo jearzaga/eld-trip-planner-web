@@ -3,45 +3,50 @@
   margin: 0.25in;
 }
 
+@layer base {
+  @media print {
+    .log-sheet[hidden] {
+      display: block !important;
+    }
+  }
+}
+
 @media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .print-log-region,
-  .print-log-region * {
-    visibility: visible;
-  }
-
-  .print-log-region {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-  }
-
-  .print-log-card {
-    border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-  }
-
+  body *:not(:has(.print-log-region), .print-log-region, .print-log-region *),
   [data-print-hidden],
   .print-log-card > [data-slot='card-header'] {
     display: none !important;
   }
 
-  .print-log-card > [data-slot='card-content'] {
+  body,
+  body :has(.print-log-region) {
+    margin: 0 !important;
     padding: 0 !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    gap: 0 !important;
   }
 
-  .log-sheet,
-  .log-sheet[hidden] {
-    display: block !important;
-    break-after: page;
-    max-width: none !important;
-    padding: 0.1in !important;
+  .print-log-card,
+  .print-log-card > [data-slot='card-content'],
+  .print-log-card > [data-slot='card-content'] > * {
+    border: 0 !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  .log-sheet {
+    zoom: 0.7;
+    width: 68rem !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+    padding: 0.25in !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    break-after: page;
   }
 
   .log-sheet:last-child {
