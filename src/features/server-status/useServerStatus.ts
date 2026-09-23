@@ -1,31 +1,30 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 
 import { api } from '@/lib/api/client';
 
-async function checkServerHealth() {
-  await api.get('/health/');
-  return true;
-}
+export const serverHealthQuery = queryOptions({
+  queryKey: ['server-health'],
+  queryFn: async () => {
+    await api.get('/health/');
+    return true;
+  },
+  retry: 1,
+  staleTime: 30_000,
+});
 
 export function useServerStatus() {
   const [hasWaited, setHasWaited] = useState(false);
-  const health = useQuery({
-    queryKey: ['server-health'],
-    queryFn: checkServerHealth,
-    retry: 1,
-    staleTime: 30_000,
-  });
+  const health = useQuery(serverHealthQuery);
+  const isChecking = health.isPending || health.isFetching;
 
   useEffect(() => {
-    if (!health.isPending && !health.isFetching) return;
+    if (!isChecking) return;
     const timeout = window.setTimeout(() => setHasWaited(true), 3_000);
     return () => window.clearTimeout(timeout);
-  }, [health.isFetching, health.isPending]);
+  }, [isChecking]);
 
   return {
-    isChecking: health.isPending || health.isFetching,
-    showWakeBanner: hasWaited && (health.isPending || health.isFetching),
-    isUnavailable: health.isError,
+    showWakeBanner: health.isError || (hasWaited && isChecking),
   };
 }
