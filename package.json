@@ -15,6 +15,7 @@
     "e2e": "playwright test -c e2e/playwright.config.ts",
     "e2e:ui": "playwright test -c e2e/playwright.config.ts --ui",
     "sync-contract": "node scripts/sync-contract.mjs",
+    "check-contract": "npm run sync-contract && git diff --exit-code -- src/lib/api src/test/fixtures e2e/fixtures/responses",
     "gen:api-types": "openapi-typescript src/lib/api/openapi.yaml -o src/lib/api/schema.d.ts",
     "format": "prettier --write ."
   },

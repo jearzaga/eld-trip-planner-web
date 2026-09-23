@@ -18,7 +18,7 @@ for (let index = 2; index < process.argv.length; index += 2) {
 
 const webDir = path.resolve(options.get('--web-dir') ?? projectDir);
 const apiDir = path.resolve(
-  options.get('--api-dir') ?? path.resolve(webDir, '../eld-trip-planner-api'),
+  options.get('--api-dir') ?? path.resolve(webDir, process.env.API_DIR ?? '../eld-trip-planner-api'),
 );
 const openapiPath = path.join(apiDir, 'openapi.yaml');
 const responseDir = path.join(apiDir, 'tests/fixtures/responses');

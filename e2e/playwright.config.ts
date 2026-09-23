@@ -10,7 +10,6 @@ const localWebUrl = `http://localhost:${localWebPort}`;
 const localApiPort = Number(process.env.E2E_API_PORT ?? 8000);
 const localApiUrl = `http://localhost:${localApiPort}/api`;
 const apiPython = process.env.E2E_API_PYTHON ?? 'uv run python';
-const mockApi = process.env.E2E_MOCK_API === '1';
 
 export default defineConfig({
   testDir: './tests',
@@ -50,22 +49,18 @@ export default defineConfig({
   webServer: productionWebUrl
     ? undefined
     : [
-        ...(!mockApi
-          ? [
-              {
-                command: `${apiPython} manage.py runserver ${localApiPort} --noreload`,
-                cwd: apiDirectory,
-                url: `${localApiUrl}/health/`,
-                env: {
-                  GEO_PROVIDER: 'fake',
-                  MONGODB_DB: 'eld_e2e',
-                  DJANGO_DEBUG: '1',
-                },
-                reuseExistingServer: !process.env.CI,
-                timeout: 120_000,
-              },
-            ]
-          : []),
+        {
+          command: `${apiPython} manage.py runserver ${localApiPort} --noreload`,
+          cwd: apiDirectory,
+          url: `${localApiUrl}/health/`,
+          env: {
+            GEO_PROVIDER: 'fake',
+            MONGODB_DB: 'eld_e2e',
+            DJANGO_DEBUG: '1',
+          },
+          reuseExistingServer: !process.env.CI,
+          timeout: 120_000,
+        },
         {
           command: `npm run dev -- --port ${localWebPort} --strictPort`,
           cwd: rootDirectory,

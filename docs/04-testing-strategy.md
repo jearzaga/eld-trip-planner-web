@@ -120,7 +120,7 @@ export default defineConfig({
       command: 'uv run python manage.py runserver 8000 --noreload',
       cwd: API_DIR,
       url: 'http://localhost:8000/api/health/',
-      // MONGODB_URI (Atlas) comes from the API's .env locally, or the CI job env (repo secret)
+      // MONGODB_URI (Atlas) comes from the API's .env locally, 
       env: { GEO_PROVIDER: 'fake', MONGODB_DB: 'eld_e2e', DJANGO_DEBUG: '1' },
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
@@ -175,51 +175,13 @@ test.describe('Daily log sheets', () => {
 2. Runs `openapi-typescript src/lib/api/openapi.yaml -o src/lib/api/schema.d.ts`.
 3. Copies `../eld-trip-planner-api/tests/fixtures/responses/*.json` → `src/test/fixtures/` and `e2e/fixtures/responses/`.
 
-Commit the results with `chore(contract): sync from api@<short-sha>`. Web CI re-runs the sync against the checked-out API
+Commit the results with `chore(contract): sync from api@<short-sha>`. Before each PR, `npm run check-contract` re-runs the sync against the sibling API
 and fails if `git diff` shows changes, which means the web repo is behind the API.
 
-## 8. CI (`.github/workflows/ci.yml`)
+## 8. CI
 
-> ⏭️ **Deferred (2026-09-23).** The workflow is not in the repo; this section is the plan for when it returns (see
-> `03-implementation-plan.md` *Decision log*). Until then, run lint, typecheck, Vitest and Playwright locally before each PR.
+No CI pipelines (decision 2026-09-24). Run every check locally before each PR:
 
-```yaml
-jobs:
-  unit:
-    steps: checkout → setup-node 22 → npm ci → lint → typecheck → vitest
-  e2e:
-    needs: unit
-    env:
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}             # Atlas SRV URI (repo secret); no Mongo container
-    steps:
-<<<<<<< HEAD
-      - uses: actions/checkout@v4                          # web repo
-      - uses: actions/checkout@v4                          # API repo (public; use a PAT secret if private)
-        with: { repository: <you>/eld-trip-planner-api, path: api, ref: main }
-=======
-      - uses: actions/checkout@v7
-      - uses: actions/checkout@v7
-        with: { repository: jearzaga/eld-trip-planner-api, path: api, ref: main, token: ${{ secrets.API_REPO_TOKEN }} }
->>>>>>> c524e49 (chore(contract): W5 sync browser fixtures and isolated checks)
-      - uses: astral-sh/setup-uv@v6
-      - run: uv sync
-        working-directory: api
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
-      - run: npm ci
-      - run: npm run sync-contract -- --api-dir ./api && git diff --exit-code   # contract freshness
-      - run: npx playwright install --with-deps chromium
-      - run: npm run e2e
-        env: { API_DIR: ./api, CI: 'true' }
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with: { name: playwright-report, path: playwright-report }
-on:
-  push: { branches: [main] }
-  pull_request:
-  repository_dispatch: { types: [api-updated] }   # fired by the API repo after it pushes to main (optional)
-  schedule: [{ cron: '0 22 * * *' }]             # nightly: catches API changes even without dispatch
+```bash
+npm run lint && npm run typecheck && npm run test:run && npm run check-contract && npm run e2e
 ```
-
-After each production deploy:
-`E2E_BASE_URL=https://<app>.vercel.app E2E_API_URL=https://<api>.onrender.com/api npm run e2e -- --project=smoke`

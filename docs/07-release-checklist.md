@@ -13,13 +13,12 @@ This checklist tracks the evidence needed for W11. The [product Definition of Do
 ## Required before final DoD sign-off
 
 - [x] API A5 published the trip and geocode endpoints, `openapi.yaml`, and SC-1…SC-7 response fixtures.
-- [ ] Finish W5: confirm consumer-contract CI against the private API repository. Synced artifacts and browser fixtures are committed.
-- [ ] Add a read-only `API_REPO_TOKEN` Actions secret to the web repository so CI can check out the private API repository. It needs only repository contents access.
+- [x] W5: synced artifacts and browser fixtures are committed; `npm run check-contract` passes locally.
 - [ ] Resolve API-owned R-09/AC-25 gap: published SC-2 remarks have null reasons at several status changes.
 - [ ] Add the final Vercel app URL and Loom URL to both repository READMEs.
 - [ ] Confirm production and preview `VITE_API_BASE_URL` values and API CORS from the deployed browser (W10).
 - [ ] Enable and pass the real-provider `@smoke` test after deployment (W10).
-- [ ] Revisit the deferred CI decision for ENG-1 and run the required checks on the final commits.
+- [ ] Run lint, typecheck, Vitest, `check-contract` and Playwright locally on the final commits.
 - [ ] Review every AC and deliverable in [01-definition-of-done.md](01-definition-of-done.md) against the integrated, hosted system.
 - [ ] Record the 3–5 minute Loom and submit the app, both repositories, and video.
 
@@ -29,4 +28,4 @@ This checklist tracks the evidence needed for W11. The [product Definition of Do
 2. **0:45–1:30 — Route:** show the map, required stop types, ordered timeline, and trip summary. Focus a stop from the timeline.
 3. **1:30–2:30 — Logs:** page through the daily sheets, compare the first sheet with the company template, and show print/PDF.
 4. **2:30–3:20 — Code:** show that the API owns HOS and response fixtures while the web app renders the result; point to the John Doe golden and SC-2 tests.
-5. **3:20–4:00 — Verification and trade-offs:** show Playwright, the contract sync workflow, cold-start behavior, and any remaining assumptions.
+5. **3:20–4:00 — Verification and trade-offs:** show Playwright, `npm run sync-contract`, cold-start behavior, and any remaining assumptions.

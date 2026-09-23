@@ -17,7 +17,7 @@ eld-trip-planner/
 └─ eld-trip-planner-web/   ← you are here
 ```
 
-Playwright boots the sibling API automatically (`API_DIR`, relative to this repo's root, default `../eld-trip-planner-api`; CI uses `./api`).
+Playwright boots the sibling API automatically (`API_DIR`, relative to this repo's root, default `../eld-trip-planner-api`).
 For cross-repo tasks start Claude with: `claude --add-dir ../eld-trip-planner-api`
 
 ## What this repo does
@@ -82,8 +82,7 @@ eld-trip-planner-web/
 │  ├─ pages/        # page objects
 │  └─ fixtures/     # scenarios.ts + synced API responses
 ├─ scripts/sync-contract.mjs
-├─ docs/
-└─ .github/workflows/ci.yml   # ⏭️ deferred, not in the repo yet
+└─ docs/
 ```
 
 ## Commands
@@ -92,6 +91,7 @@ eld-trip-planner-web/
 npm run dev                      # http://localhost:5173 (expects API at VITE_API_BASE_URL, default http://localhost:8000/api)
 npm run test                     # Vitest + RTL
 npm run lint && npm run typecheck
+npm run check-contract           # re-sync and fail if the committed contract is stale
 npm run sync-contract            # pull openapi.yaml + fixtures from ../eld-trip-planner-api, regenerate types
 npm run e2e                      # Playwright: boots API (fake geo) + Vite, desktop + mobile
 npm run e2e -- tests/log-sheets.spec.ts --headed
