@@ -41,7 +41,7 @@ Never cut W1, A2, A3, W8.
 | W0-01 | Create GitHub repo `eld-trip-planner-web` (public); add `CLAUDE.md`, `README.md`, `docs/` | — | ✅ |
 | W0-02 | Per `06-project-setup.md`: Vite React-TS; Tailwind v4; `@/` alias; shadcn/ui init + components; react-router, TanStack Query, Zustand, axios, react-hook-form + zod, react-leaflet, date-fns; Vitest + RTL + MSW; scripts | `src/App.test.tsx` renders | ✅ |
 | W0-03 | App shell: providers, router, header "ELD Trip Planner", empty planner layout; axios `lib/api/client.ts` (base URL, 90 s timeout, error normalization); `stores/ui-store.ts` | `App.test.tsx` heading; `client.test.ts` error normalization | ✅ |
-| W0-04 | `vercel.json` SPA rewrite | — | ⬜ |
+| W0-04 | `vercel.json` SPA rewrite | — | ✅ |
 | W0-05 | CI `unit` job: lint, typecheck, vitest | push → green | ⏭️ |
 | W0-06 | Vercel project from repo; `VITE_API_BASE_URL` = Render URL (from A0-08) | open the Vercel URL → shell renders | ⬜ |
 
