@@ -7,6 +7,9 @@ const apiDirectory = path.resolve(rootDirectory, process.env.API_DIR ?? '../eld-
 const productionWebUrl = process.env.E2E_BASE_URL;
 const localWebPort = Number(process.env.E2E_PORT ?? 5173);
 const localWebUrl = `http://localhost:${localWebPort}`;
+const localApiPort = Number(process.env.E2E_API_PORT ?? 8000);
+const localApiUrl = `http://localhost:${localApiPort}/api`;
+const apiPython = process.env.E2E_API_PYTHON ?? 'uv run python';
 
 export default defineConfig({
   testDir: './tests',
@@ -47,9 +50,9 @@ export default defineConfig({
     ? undefined
     : [
         {
-          command: 'uv run python manage.py runserver 8000 --noreload',
+          command: `${apiPython} manage.py runserver ${localApiPort} --noreload`,
           cwd: apiDirectory,
-          url: 'http://localhost:8000/api/health/',
+          url: `${localApiUrl}/health/`,
           env: {
             GEO_PROVIDER: 'fake',
             MONGODB_DB: 'eld_e2e',
@@ -62,7 +65,7 @@ export default defineConfig({
           command: `npm run dev -- --port ${localWebPort} --strictPort`,
           cwd: rootDirectory,
           url: localWebUrl,
-          env: { VITE_API_BASE_URL: 'http://localhost:8000/api' },
+          env: { VITE_API_BASE_URL: localApiUrl },
           reuseExistingServer: !process.env.CI,
         },
       ],

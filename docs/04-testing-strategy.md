@@ -180,7 +180,7 @@ and fails if `git diff` shows changes, which means the web repo is behind the AP
 
 ## 8. CI
 
-The web-only `unit` job in `.github/workflows/unit.yml` runs lint, typecheck, Vitest and build on pull requests and pushes to main. It does not start the API or access Atlas. Playwright CI remains deferred until A5 publishes the contract and Linux visual snapshots are approved. Run Playwright locally before each PR until that job is added.
+The web-only `unit` job in `.github/workflows/unit.yml` runs lint, typecheck, Vitest and build on pull requests and pushes to main. The `contract` job in `.github/workflows/contract.yml` checks out API `main`, verifies synchronized artifacts, and runs `api-contract.spec.ts` against an isolated MongoDB service with fake geo. Neither job accesses Atlas. The remaining UI Playwright suite is local until Linux visual snapshots are approved.
 
 The planned E2E job will use a throwaway MongoDB service container, check out the public API repository, sync the published contract, and upload the Playwright report on failure. It must not use the shared Atlas cluster.
 

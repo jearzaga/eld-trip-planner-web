@@ -41,7 +41,8 @@ const dailyLogSchema = z.object({
       status: dutyStatusSchema,
       start_min: z.number().min(0).max(1440),
       end_min: z.number().min(0).max(1440),
-      note: z.string().optional(),
+      note: z.string().nullable().optional(),
+      location: z.string().nullable().optional(),
     }),
   ),
   totals: z.object({
@@ -53,8 +54,8 @@ const dailyLogSchema = z.object({
   remarks: z.array(
     z.object({
       at_min: z.number().min(0).max(1440),
-      location: z.string(),
-      note: z.string(),
+      location: z.string().nullable(),
+      note: z.string().nullable(),
     }),
   ),
   recap: z.object({
