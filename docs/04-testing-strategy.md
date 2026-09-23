@@ -180,9 +180,11 @@ and fails if `git diff` shows changes, which means the web repo is behind the AP
 
 ## 8. CI
 
-The web-only `unit` job in `.github/workflows/unit.yml` runs lint, typecheck, Vitest and build on pull requests and pushes to main. The `contract` job in `.github/workflows/contract.yml` checks out API `main`, verifies synchronized artifacts, and runs `api-contract.spec.ts` against an isolated MongoDB service with fake geo. Neither job accesses Atlas. The remaining UI Playwright suite is local until Linux visual snapshots are approved.
+The web-only `unit` job in `.github/workflows/unit.yml` runs lint, typecheck, Vitest and build on pull requests and pushes to main. The `contract` job in `.github/workflows/contract.yml` checks out private API `main` with the web repository's read-only `API_REPO_TOKEN` Actions secret, verifies synchronized artifacts, and runs `api-contract.spec.ts` against an isolated MongoDB service with fake geo. Neither job accesses Atlas. The remaining UI Playwright suite is local until Linux visual snapshots are approved.
 
-The planned E2E job will use a throwaway MongoDB service container, check out the public API repository, sync the published contract, and upload the Playwright report on failure. It must not use the shared Atlas cluster.
+The planned full E2E job will use a throwaway MongoDB service container, check out the private API repository with the same read-only token, sync the published contract, and upload the Playwright report on failure. It must not use the shared Atlas cluster.
+
+For local web-only UI checks while API access is unavailable, run `E2E_MOCK_API=1 npm run e2e -- e2e/tests/log-sheets.spec.ts` or other specs that install `mockTripApi`. The harness, consumer-contract, cold-start, and production-smoke specs still require an API server.
 
 ```yaml
 jobs:
@@ -192,7 +194,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/checkout@v7
-        with: { repository: jearzaga/eld-trip-planner-api, path: api, ref: main }
+        with: { repository: jearzaga/eld-trip-planner-api, path: api, ref: main, token: ${{ secrets.API_REPO_TOKEN }} }
       - uses: astral-sh/setup-uv@v6
       - run: uv sync
         working-directory: api

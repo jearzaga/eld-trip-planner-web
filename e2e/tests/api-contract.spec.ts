@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-import shortDay from '../fixtures/responses/sc1.json';
-import twoDay from '../fixtures/responses/sc2.json';
-import cycleLimited from '../fixtures/responses/sc3.json';
-import cycleFull from '../fixtures/responses/sc4.json';
-import crossCountry from '../fixtures/responses/sc5.json';
-import unroutable from '../fixtures/responses/sc6.json';
-import pickupAtCurrent from '../fixtures/responses/sc7.json';
+import shortDay from '../fixtures/responses/sc1.json' with { type: 'json' };
+import twoDay from '../fixtures/responses/sc2.json' with { type: 'json' };
+import cycleLimited from '../fixtures/responses/sc3.json' with { type: 'json' };
+import cycleFull from '../fixtures/responses/sc4.json' with { type: 'json' };
+import crossCountry from '../fixtures/responses/sc5.json' with { type: 'json' };
+import unroutable from '../fixtures/responses/sc6.json' with { type: 'json' };
+import pickupAtCurrent from '../fixtures/responses/sc7.json' with { type: 'json' };
 import { ALL_SCENARIOS } from '../fixtures/scenarios';
 
 const apiUrl =

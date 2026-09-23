@@ -18,7 +18,8 @@ export function Remarks({ log }: { log: DailyLog }) {
                 {formatLogMinutes(remark.at_min)}
               </time>
               <span>
-                <strong>{remark.location}</strong> — {remark.note}
+                <strong>{remark.location}</strong>
+                {remark.note ? ` — ${remark.note}` : null}
               </span>
             </li>
           ))}

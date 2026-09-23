@@ -189,7 +189,7 @@ export function LogGrid({ log }: { log: DailyLog }) {
 
       {log.remarks.map((remark, index) => {
         const x = minuteX(remark.at_min);
-        const labelY = 280 + (index % 2) * 20;
+        const labelY = 274 + (index % 3) * 18;
         return (
           <g key={`${remark.at_min}-${remark.note}`}>
             <path
@@ -202,8 +202,8 @@ export function LogGrid({ log }: { log: DailyLog }) {
             <text
               x={Math.min(x + 5, gridLeft + gridWidth - 10)}
               y={labelY}
-              transform={`rotate(-28 ${Math.min(x + 5, gridLeft + gridWidth - 10)} ${labelY})`}
-              fontSize={8}
+              transform={`rotate(-45 ${Math.min(x + 5, gridLeft + gridWidth - 10)} ${labelY})`}
+              fontSize={7}
             >
               {remark.location}
             </text>
