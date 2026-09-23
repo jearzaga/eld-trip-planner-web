@@ -1,21 +1,26 @@
 import { z } from 'zod';
 
-export const locationSchema = z.object({
-  label: z.string().min(1),
-  lat: z.number(),
-  lng: z.number(),
-});
+export const locationSchema = z.object(
+  {
+    label: z.string().min(1),
+    lat: z.number(),
+    lng: z.number(),
+  },
+  { error: 'Select a location from the list.' },
+);
+
+const requiredLogField = z.string().trim().min(1, 'Required on the daily log.');
 
 export const logMetaSchema = z.object({
-  driver_name: z.string(),
+  driver_name: requiredLogField,
   co_driver_name: z.string(),
-  carrier_name: z.string(),
-  main_office_address: z.string(),
-  home_terminal_address: z.string(),
-  truck_tractor_no: z.string(),
-  trailer_no: z.string(),
-  shipping_doc_no: z.string(),
-  shipper_commodity: z.string(),
+  carrier_name: requiredLogField,
+  main_office_address: requiredLogField,
+  home_terminal_address: requiredLogField,
+  truck_tractor_no: requiredLogField,
+  trailer_no: requiredLogField,
+  shipping_doc_no: requiredLogField,
+  shipper_commodity: requiredLogField,
 });
 
 export const tripFormSchema = z.object({

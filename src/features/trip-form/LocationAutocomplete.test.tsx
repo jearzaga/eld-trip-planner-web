@@ -3,10 +3,8 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
-import {
-  LocationAutocomplete,
-  type LocationOption,
-} from '@/features/trip-form/LocationAutocomplete';
+import { LocationAutocomplete } from '@/features/trip-form/LocationAutocomplete';
+import type { LocationOption } from '@/features/trip-form/schema';
 import { renderWithProviders } from '@/test/render';
 import { server } from '@/test/server';
 

@@ -2,15 +2,13 @@ import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 
+import { formatHours } from '../trip-results/format';
+
 type CycleInputProps = {
   value: number;
   onChange: (value: number) => void;
   error?: string;
 };
-
-function formatHours(value: number) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/0$/, '');
-}
 
 export function CycleInput({ value, onChange, error }: CycleInputProps) {
   const availableHours = Math.max(0, 70 - value);
@@ -20,7 +18,7 @@ export function CycleInput({ value, onChange, error }: CycleInputProps) {
       <div className="flex items-end justify-between gap-4">
         <FieldLabel htmlFor="cycle-used">Current cycle used</FieldLabel>
         <span className="text-muted-foreground text-sm font-medium">
-          {formatHours(availableHours)} h available
+          {formatHours(availableHours)} available
         </span>
       </div>
       <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] items-center gap-4">

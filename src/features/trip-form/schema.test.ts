@@ -39,4 +39,33 @@ describe('trip form schema', () => {
       shipping_doc_no: 'BOL-10001',
     });
   });
+
+  it('asks for a listed location when none was selected', () => {
+    const defaults = getTripFormDefaults(new Date('2026-09-24T10:07:00.000Z'), 'America/New_York');
+    const result = tripFormSchema.safeParse({
+      ...defaults,
+      pickup: selectedLocation,
+      dropoff: selectedLocation,
+    });
+
+    expect(result.error?.issues).toEqual([
+      expect.objectContaining({ path: ['current'], message: 'Select a location from the list.' }),
+    ]);
+  });
+
+  it('requires every log detail except the co-driver', () => {
+    const defaults = getTripFormDefaults(new Date('2026-09-24T10:07:00.000Z'), 'America/New_York');
+    const completeTrip = {
+      ...defaults,
+      current: selectedLocation,
+      pickup: selectedLocation,
+      dropoff: selectedLocation,
+    };
+    const result = tripFormSchema.safeParse({
+      ...completeTrip,
+      log_meta: { ...completeTrip.log_meta, driver_name: '', co_driver_name: '' },
+    });
+
+    expect(result.error?.issues.map((issue) => issue.path)).toEqual([['log_meta', 'driver_name']]);
+  });
 });

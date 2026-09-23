@@ -29,7 +29,7 @@ test.describe('Daily log sheets', () => {
     await expect(sheet).toContainText('Sleeper Berth');
     await expect(sheet).toContainText('Driving');
     await expect(sheet).toContainText('On Duty');
-    await expect(sheet).toContainText('70 Hour / 8 Day');
+    await expect(sheet).toContainText('70 Hour/8 Day Drivers');
   });
 
   test('AC-22: the duty line is continuous through every status change', async ({ page }) => {
@@ -88,19 +88,41 @@ test.describe('Daily log sheets', () => {
     await expect(sheet.getByTestId('recap-c')).not.toBeEmpty();
   });
 
-  test('AC-27: drivers can page through and print one sheet per page', async ({ page }) => {
+  test('AC-27: drivers can page through and print one sheet per page', async ({
+    page,
+    browserName,
+  }, testInfo) => {
     const logs = new LogSheetsPage(page);
+    const printablePage = { width: 10.5 * 96, height: 8 * 96 };
 
     await expect(logs.pager).toBeVisible();
     await logs.nextButton.click();
     await expect(logs.sheet(2)).toBeVisible();
+    await page.setViewportSize(printablePage);
     await page.emulateMedia({ media: 'print' });
     await expect(logs.printButton).toBeHidden();
+    const sheetCount = await logs.sheets.count();
+    for (let index = 0; index < sheetCount; index += 1) {
+      const sheetBox = await logs.sheets.nth(index).boundingBox();
+      expect(sheetBox?.height).toBeLessThanOrEqual(printablePage.height);
+    }
+
+    test.skip(
+      browserName !== 'chromium' || testInfo.project.name !== 'desktop',
+      'PDF output is only available in desktop Chromium',
+    );
+    const printedLogs = (await page.pdf({ preferCSSPageSize: true })).toString('latin1');
+    expect(printedLogs.match(/\/Type\s*\/Page[^s]/g)).toHaveLength(sheetCount);
   });
 
   test('SC-2 Day 1 matches the approved visual reference', async ({ page }) => {
     const sheet = new LogSheetsPage(page).sheet(1);
 
+    await page
+      .locator('.tsqd-open-btn-container')
+      .evaluateAll((launchers) =>
+        launchers.forEach((launcher) => ((launcher as HTMLElement).style.display = 'none')),
+      );
     await expect(sheet).toHaveScreenshot('two-day-trip-day-one.png');
   });
 });

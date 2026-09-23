@@ -8,7 +8,3 @@ export function formatLogMinutes(minutes: number) {
   const remainder = minutes % 60;
   return `${String(hours).padStart(2, '0')}:${String(remainder).padStart(2, '0')}`;
 }
-
-export function formatLogHours(hours: number) {
-  return String(hours);
-}

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { StopsTimeline } from '@/features/stops/StopsTimeline';
 import { tripPlanSchema } from '@/features/trip-results/schema';
 import { useUiStore } from '@/stores/ui-store';
-import { previewTrip } from '@/test/previewTrip';
+import twoDayTrip from '@/test/fixtures/sc2.json';
 import { renderWithProviders } from '@/test/render';
 
 describe('StopsTimeline', () => {
@@ -12,7 +12,7 @@ describe('StopsTimeline', () => {
 
   it('renders ordered stop details and selects a stop', async () => {
     const user = userEvent.setup();
-    const trip = tripPlanSchema.parse(previewTrip);
+    const trip = tripPlanSchema.parse(twoDayTrip);
     renderWithProviders(
       <StopsTimeline stops={trip.stops} timeZone={trip.summary.home_timezone} />,
     );

@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { delay, http, HttpResponse } from 'msw';
 
 import { useServerStatus } from '@/features/server-status/useServerStatus';
@@ -24,5 +24,23 @@ describe('useServerStatus', () => {
     expect(result.current.showWakeBanner).toBe(false);
     await act(() => vi.advanceTimersByTimeAsync(3_000));
     expect(result.current.showWakeBanner).toBe(true);
+  });
+
+  it('shows the server status banner as soon as health fails', async () => {
+    server.use(http.get('http://localhost:8000/api/health/', () => HttpResponse.error()));
+
+    const { result } = renderHook(() => useServerStatus(), {
+      wrapper: TestProviders,
+    });
+
+    await waitFor(() => expect(result.current.showWakeBanner).toBe(true), { timeout: 2_500 });
+  });
+
+  it('hides the banner once health answers', async () => {
+    const { result } = renderHook(() => useServerStatus(), {
+      wrapper: TestProviders,
+    });
+
+    await waitFor(() => expect(result.current).toEqual({ showWakeBanner: false }));
   });
 });

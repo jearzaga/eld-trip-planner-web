@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const apiUrl = process.env.E2E_API_URL ?? 'http://localhost:8000/api';
+import { apiUrl } from '../fixtures/api-url';
 
 test('application shell and API health endpoint are available', async ({ page, request }) => {
   const healthResponse = await request.get(`${apiUrl}/health/`);

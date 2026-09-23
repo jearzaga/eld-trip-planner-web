@@ -5,10 +5,10 @@
 
 ## 1. Repository strategy
 
-| Repo | Owns | Deploys to | CI |
+| Repo | Owns | Deploys to | Local checks |
 |---|---|---|---|
-| `eld-trip-planner-api` | HOS rules + engine, log builder, geo adapters, REST API, MongoDB models, **API contract** (`openapi.yaml`, scenario response fixtures), canonical business rules | **Render** (Web Service, gunicorn) | ruff, pytest, contract drift checks |
-| `eld-trip-planner-web` | UI, log-sheet rendering, **system E2E (Playwright)**, product Definition of Done | **Vercel** (static SPA) | eslint, tsc, Vitest, Playwright (checks out the API repo) |
+| `eld-trip-planner-api` | HOS rules + engine, log builder, geo adapters, REST API, MongoDB models, **API contract** (`openapi.yaml`, scenario response fixtures), canonical business rules | **Render** (Web Service, gunicorn) | `uv run ruff check . && uv run pytest` (incl. contract drift tests) |
+| `eld-trip-planner-web` | UI, log-sheet rendering, **system E2E (Playwright)**, product Definition of Done | **Vercel** (static SPA) | `npm run lint && npm run typecheck && npm run test:run && npm run check-contract && npm run e2e` |
 
 **Why two repos:** separate deploy targets and lifecycles, a clear ownership boundary (rules and data vs presentation),
 and each repo stays small enough for a grader to review on its own.
@@ -18,7 +18,7 @@ and each repo stays small enough for a grader to review on its own.
 | Cost of splitting | Mitigation |
 |---|---|
 | API and UI can drift apart | API commits `openapi.yaml` + scenario response fixtures; web generates types from them (`npm run sync-contract`); consumer-side `api-contract.spec.ts` in Playwright |
-| E2E needs both apps | Playwright `webServer` boots the sibling API (`API_DIR`); web CI checks out the API repo |
+| E2E needs both apps | Playwright `webServer` boots the sibling API (`API_DIR`); `full-system.spec.ts` plans a trip through it with no mocks |
 | Docs split across repos | Each doc has one canonical home (rules → api, DoD → web); others link, never copy |
 | A change can span both repos | Local sibling folders + `claude --add-dir`; API commits tagged `contract:` / `BREAKING:` |
 
@@ -105,7 +105,7 @@ The sheet prints one per page (`@page { size: letter landscape }`), and the SVG 
 | Var | Local | Vercel |
 |---|---|---|
 | `VITE_API_BASE_URL` | `http://localhost:8000/api` | `https://<api>.onrender.com/api` |
-| `API_DIR` (E2E only) | `../eld-trip-planner-api` | — (CI sets `./api`) |
+| `API_DIR` (E2E only) | `../eld-trip-planner-api` | — |
 | `E2E_BASE_URL` (smoke) | — | `https://<app>.vercel.app` |
 | `E2E_API_URL` (smoke) | — | `https://<api>.onrender.com/api` |
 
@@ -113,7 +113,7 @@ The sheet prints one per page (`@page { size: letter landscape }`), and the SVG 
 
 | Risk | Mitigation |
 |---|---|
-| Contract drift | Generated types + synced fixtures + `api-contract.spec.ts`; web CI runs against API `main` |
+| Contract drift | Generated types + synced fixtures + `api-contract.spec.ts`; `npm run check-contract` before each PR fails when the synced contract is stale |
 | Cold start makes the app look broken | §3 (AC-46) + `cold-start.spec.ts` |
 | Leaflet SSR/CSS issues | Import `leaflet/dist/leaflet.css`; fix default marker icon paths; custom SVG markers |
 | Log sheet illegible on mobile | Horizontal fit with pinch/zoom hint + "open full size" / print |

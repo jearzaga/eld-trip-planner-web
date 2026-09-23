@@ -91,7 +91,7 @@ npx playwright show-report
 
 3. Page objects + `e2e/fixtures/scenarios.ts`.
 4. Every acceptance spec as `test.fixme('AC-xx: …')`. Check with `npm run e2e -- --list`.
-5. CI `e2e` job (checks out the API repo into `./api`) — ⏭️ deferred, see `03-implementation-plan.md` *Decision log*. Then do **A1** in the API repo (pytest acceptance tests, skipped).
+5. Run the whole suite locally (`npm run e2e`); there is no CI (see `03-implementation-plan.md` *Decision log*). Then do **A1** in the API repo (pytest acceptance tests, skipped).
 
 **W1 + A1 ✅ → feature work begins.**
 
@@ -149,7 +149,7 @@ rule or an expected number, check the business rules first and record any decisi
 
 | Day | Work | Outcome |
 |---|---|---|
-| 1 | A0, W0 (including Render + Vercel hello-world deploys) | Both repos live, CI green |
+| 1 | A0, W0 (including Render + Vercel hello-world deploys) | Both repos live, local checks green |
 | 2 | W1, A1, start A2 | Playwright harness + all acceptance specs; engine started |
 | 3 | A2, A3 | Engine + logs proven by goldens and property tests |
 | 4 | A4, A5, W5 | API done locally; contract synced; `api-contract.spec.ts` green |

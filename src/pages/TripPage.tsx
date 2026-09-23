@@ -6,6 +6,7 @@ import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LogSheetPager } from '@/features/log-sheets/LogSheetPager';
+import { RouteInstructions } from '@/features/route-map/RouteInstructions';
 import { RouteMap } from '@/features/route-map/RouteMap';
 import { StopsTimeline } from '@/features/stops/StopsTimeline';
 import { SummaryCards } from '@/features/summary/SummaryCards';
@@ -112,7 +113,10 @@ export function TripPage() {
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
         <RouteMap trip={trip} />
-        <StopsTimeline stops={trip.stops} timeZone={trip.summary.home_timezone} />
+        <div className="flex flex-col gap-6">
+          <RouteInstructions trip={trip} />
+          <StopsTimeline stops={trip.stops} timeZone={trip.summary.home_timezone} />
+        </div>
       </div>
 
       <LogSheetPager trip={trip} />

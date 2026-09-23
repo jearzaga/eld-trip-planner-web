@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ClipboardList, Sparkles, TriangleAlert } from 'lucide-react';
-import { Controller, useForm } from 'react-hook-form';
+import { Sparkles, TriangleAlert } from 'lucide-react';
+import { Controller, useForm, type FieldPath } from 'react-hook-form';
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -44,12 +44,30 @@ function getErrorMessage(error: unknown) {
     if (status === null || code === 'NETWORK_ERROR') {
       return 'We could not reach the planning server. Check your connection and try again.';
     }
+    if (code === 'PROVIDER_UNAVAILABLE') {
+      return 'The routing service is unavailable right now. Please try again.';
+    }
     if (status === 502 || status === 503) {
       return 'The planning server is still waking up. Please try again.';
     }
     if ('message' in error) return String(error.message);
   }
   return 'The trip could not be planned. Please try again.';
+}
+
+const locationFields = new Set(['current', 'pickup', 'dropoff']);
+
+function apiFieldErrors(error: unknown, formFields: object) {
+  const fields =
+    typeof error === 'object' && error && 'fields' in error
+      ? (error.fields as Record<string, string[]> | undefined)
+      : undefined;
+  return Object.entries(fields ?? {}).flatMap(([apiField, messages]) => {
+    const [root = ''] = apiField.split('.');
+    if (!(root in formFields)) return [];
+    const formField = locationFields.has(root) ? root : apiField;
+    return [[formField as FieldPath<TripFormValues>, messages.join(' ')] as const];
+  });
 }
 
 export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
@@ -62,11 +80,11 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
     [defaults.home_timezone],
   );
   const [submitError, setSubmitError] = useState<string>();
-  const [isReady, setIsReady] = useState(false);
   const {
     control,
     register,
     reset,
+    setError,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<TripFormValues>({
@@ -76,12 +94,13 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
 
   const submit = handleSubmit(async (values) => {
     setSubmitError(undefined);
-    setIsReady(false);
     try {
       const result = await onSubmit(values);
-      setIsReady(true);
       onPlanned(result.id);
     } catch (error) {
+      for (const [field, message] of apiFieldErrors(error, defaults)) {
+        setError(field, { type: 'server', message });
+      }
       setSubmitError(getErrorMessage(error));
     }
   });
@@ -222,13 +241,6 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
               </AlertAction>
             </Alert>
           ) : null}
-          {isReady ? (
-            <Alert>
-              <ClipboardList aria-hidden="true" />
-              <AlertTitle>Trip plan is ready.</AlertTitle>
-              <AlertDescription>Opening the route and daily logs now.</AlertDescription>
-            </Alert>
-          ) : null}
 
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button
@@ -239,7 +251,7 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
               onClick={() => reset(getSampleTripValues(defaults))}
             >
               <Sparkles data-icon="inline-start" aria-hidden="true" />
-              Use sample trip
+              Try a sample trip
             </Button>
             <Button type="submit" data-testid="btn-plan-trip" disabled={isSubmitting}>
               Plan trip

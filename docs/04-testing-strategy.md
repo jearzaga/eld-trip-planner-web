@@ -55,13 +55,14 @@ Defined canonically in the API repo; mirrored in `e2e/fixtures/scenarios.ts` (in
 |---|---|---|
 | `harness.spec.ts` | App shell loads; API `/api/health/` ok (proves both servers + Mongo boot) | **W1** (green immediately) |
 | `api-contract.spec.ts` | `POST /api/trips/` for SC-1…SC-7: status codes, response shape, key numbers match synced fixtures | **A5** (API phase) |
+| `full-system.spec.ts` | No mocks: sample trip planned through the real API → `/trips/<id>` renders map, stops, filled log header, totals 24, and reloads (AC-45); SC-5 draws one sheet per API `daily_logs` entry | W5 |
 | `trip-form.spec.ts` | AC-01…AC-05 | W6 |
 | `route-map.spec.ts` | AC-10…AC-13 | W7 |
 | `share-link.spec.ts` | AC-45 | W7 |
 | `log-sheets.spec.ts` | AC-20…AC-27 (+ visual snapshot, print) | W8 |
 | `hos-scenarios.spec.ts` | AC-30…AC-35 as seen on screen (SC-1…SC-5) | W8 |
-| `cold-start.spec.ts` | AC-46: `page.route` delays `/api/health/` 5 s → wake banner visible → plan succeeds | W9 |
-| `errors.spec.ts` | AC-42, AC-43: loading stages, SC-6, network abort | W9 |
+| `cold-start.spec.ts` | AC-46: `page.route` delays `/api/health/` 5 s → wake banner visible → plan succeeds; a first `503` on `POST /trips/` is retried once and the trip renders | W9 |
+| `errors.spec.ts` | AC-42, AC-43: loading stages, SC-6 (422), provider `502`, network abort | W9 |
 | `responsive.spec.ts` | AC-40, AC-41: no horizontal scroll at 375 / 1440 | W9 |
 | `a11y.spec.ts` | AC-44: axe on planner + results pages | W9 |
 | `smoke.spec.ts` | `@smoke`: production Vercel + Render, real providers; warms API first | W10 |
@@ -78,7 +79,7 @@ controls; use test IDs for data regions.
 | Autocomplete | `suggestions-<field>`, `suggestion-item` |
 | Status | `planning-loader`, `error-banner`, `error-retry` |
 | Summary | `summary-total-miles`, `summary-driving-hrs`, `summary-duration`, `summary-arrival`, `summary-log-days`, `summary-stop-count` |
-| Map | `route-map`, `route-polyline`, `map-legend`, `marker-<type>` |
+| Map | `route-map`, `route-polyline`, `map-legend`, `marker-<type>`, `route-legs`, `route-leg` |
 | Timeline | `stops-timeline`, `stop-item` (`data-stop-type`, `data-seq`) |
 | Log sheet | `log-sheet` (`data-day`), `log-date`, `log-from`, `log-to`, `log-miles-driving`, `log-total-mileage`, `log-carrier`, `log-main-office`, `log-home-terminal`, `log-vehicle-numbers`, `log-shipping-doc` |
 | Grid | `log-grid`, `duty-line`, `total-OFF`, `total-SB`, `total-D`, `total-ON`, `total-sum` |
@@ -88,7 +89,8 @@ controls; use test IDs for data regions.
 ### 5.1 How specs reach the API
 
 The frontend always calls `VITE_API_BASE_URL`, and the tests don't need to know that URL: specs that call the API directly (`harness`,
-`api-contract`) use `process.env.E2E_API_URL ?? 'http://localhost:8000/api'`.
+`api-contract`, `full-system`) import `apiUrl` from `e2e/fixtures/api-url.ts`: `E2E_API_URL`, else `http://localhost:${E2E_API_PORT ?? 8000}/api`.
+The config passes `CORS_ALLOWED_ORIGINS` for the E2E web origin to the API, so alternate ports (`E2E_PORT`, `E2E_API_PORT`) work.
 
 ## 6. Playwright configuration
 
@@ -99,7 +101,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 // npm scripts run from the web repo root, so paths resolve from there
 const ROOT = process.cwd();
-const API_DIR = path.resolve(ROOT, process.env.API_DIR ?? '../eld-trip-planner-api'); // sibling repo; CI uses ./api
+const API_DIR = path.resolve(ROOT, process.env.API_DIR ?? '../eld-trip-planner-api');
 const PROD_WEB = process.env.E2E_BASE_URL;                                             // set only for production smoke
 
 export default defineConfig({
@@ -120,7 +122,7 @@ export default defineConfig({
       command: 'uv run python manage.py runserver 8000 --noreload',
       cwd: API_DIR,
       url: 'http://localhost:8000/api/health/',
-      // MONGODB_URI (Atlas) comes from the API's .env locally, or the CI job env (repo secret)
+      // MONGODB_URI (Atlas) comes from the API's .env locally, 
       env: { GEO_PROVIDER: 'fake', MONGODB_DB: 'eld_e2e', DJANGO_DEBUG: '1' },
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
@@ -175,45 +177,13 @@ test.describe('Daily log sheets', () => {
 2. Runs `openapi-typescript src/lib/api/openapi.yaml -o src/lib/api/schema.d.ts`.
 3. Copies `../eld-trip-planner-api/tests/fixtures/responses/*.json` → `src/test/fixtures/` and `e2e/fixtures/responses/`.
 
-Commit the results with `chore(contract): sync from api@<short-sha>`. Web CI re-runs the sync against the checked-out API
+Commit the results with `chore(contract): sync from api@<short-sha>`. Before each PR, `npm run check-contract` re-runs the sync against the sibling API
 and fails if `git diff` shows changes, which means the web repo is behind the API.
 
-## 8. CI (`.github/workflows/ci.yml`)
+## 8. Local checks
 
-> ⏭️ **Deferred (2026-09-23).** The workflow is not in the repo; this section is the plan for when it returns (see
-> `03-implementation-plan.md` *Decision log*). Until then, run lint, typecheck, Vitest and Playwright locally before each PR.
+No CI pipelines (decision 2026-09-24). Run every check locally before each PR:
 
-```yaml
-jobs:
-  unit:
-    steps: checkout → setup-node 22 → npm ci → lint → typecheck → vitest
-  e2e:
-    needs: unit
-    env:
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}             # Atlas SRV URI (repo secret); no Mongo container
-    steps:
-      - uses: actions/checkout@v4                          # web repo
-      - uses: actions/checkout@v4                          # API repo (public; use a PAT secret if private)
-        with: { repository: <you>/eld-trip-planner-api, path: api, ref: main }
-      - uses: astral-sh/setup-uv@v6
-      - run: uv sync
-        working-directory: api
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
-      - run: npm ci
-      - run: npm run sync-contract -- --api-dir ./api && git diff --exit-code   # contract freshness
-      - run: npx playwright install --with-deps chromium
-      - run: npm run e2e
-        env: { API_DIR: ./api, CI: 'true' }
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with: { name: playwright-report, path: playwright-report }
-on:
-  push: { branches: [main] }
-  pull_request:
-  repository_dispatch: { types: [api-updated] }   # fired by the API repo after it pushes to main (optional)
-  schedule: [{ cron: '0 22 * * *' }]             # nightly: catches API changes even without dispatch
+```bash
+npm run lint && npm run typecheck && npm run test:run && npm run check-contract && npm run e2e
 ```
-
-After each production deploy:
-`E2E_BASE_URL=https://<app>.vercel.app E2E_API_URL=https://<api>.onrender.com/api npm run e2e -- --project=smoke`

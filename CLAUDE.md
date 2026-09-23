@@ -17,7 +17,7 @@ eld-trip-planner/
 └─ eld-trip-planner-web/   ← you are here
 ```
 
-Playwright boots the sibling API automatically (`API_DIR`, relative to this repo's root, default `../eld-trip-planner-api`; CI uses `./api`).
+Playwright boots the sibling API automatically (`API_DIR`, relative to this repo's root, default `../eld-trip-planner-api`).
 For cross-repo tasks start Claude with: `claude --add-dir ../eld-trip-planner-api`
 
 ## What this repo does
@@ -33,7 +33,7 @@ all segments, totals, remarks and recap numbers come from the API. The frontend 
 | `docs/01-definition-of-done.md` | **Canonical** product acceptance criteria (AC-xx), traceability, task DoD |
 | `docs/02-architecture.md` | System overview, frontend structure, log-sheet rendering, Vercel deploy, cold-start UX |
 | `docs/03-implementation-plan.md` | **System progress overview** + web tasks (`W#-##`) with status — update as you work |
-| `docs/04-testing-strategy.md` | **Playwright-first** strategy, spec list, `data-testid` contract, config, cross-repo CI |
+| `docs/04-testing-strategy.md` | **Playwright-first** strategy, spec list, `data-testid` contract, config, local checks |
 | `docs/05-getting-started.md` | Workspace onboarding for both repos, schedule, TDD loop, Claude Code prompts |
 | `docs/06-project-setup.md` | Vite + React TS, Tailwind, shadcn/ui, libraries (state, API, forms, map, tests), config files |
 | `../eld-trip-planner-api/docs/01-business-rules.md` | **Canonical** HOS rules, glossary, worked example (read-only from here) |
@@ -82,8 +82,7 @@ eld-trip-planner-web/
 │  ├─ pages/        # page objects
 │  └─ fixtures/     # scenarios.ts + synced API responses
 ├─ scripts/sync-contract.mjs
-├─ docs/
-└─ .github/workflows/ci.yml   # ⏭️ deferred, not in the repo yet
+└─ docs/
 ```
 
 ## Commands
@@ -92,6 +91,7 @@ eld-trip-planner-web/
 npm run dev                      # http://localhost:5173 (expects API at VITE_API_BASE_URL, default http://localhost:8000/api)
 npm run test                     # Vitest + RTL
 npm run lint && npm run typecheck
+npm run check-contract           # re-sync and fail if the committed contract is stale
 npm run sync-contract            # pull openapi.yaml + fixtures from ../eld-trip-planner-api, regenerate types
 npm run e2e                      # Playwright: boots API (fake geo) + Vite, desktop + mobile
 npm run e2e -- tests/log-sheets.spec.ts --headed

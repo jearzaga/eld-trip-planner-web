@@ -121,7 +121,7 @@ function StopMarker({ stop, timeZone }: { stop: TripStop; timeZone: string }) {
       eventHandlers={{ click: () => selectStop(stop.seq) }}
     >
       <Popup>
-        <div role="dialog" aria-label={`${stop.label} stop details`} className="min-w-48">
+        <div className="min-w-48">
           <p className="font-semibold">{stop.label}</p>
           <p className="text-muted-foreground text-sm">{markerConfig[stop.type].label}</p>
           <p className="mt-2 text-sm">
@@ -137,11 +137,11 @@ function StopMarker({ stop, timeZone }: { stop: TripStop; timeZone: string }) {
 
 function MapLegend() {
   return (
-    <div aria-label="Map legend" className="flex flex-wrap gap-2">
+    <div data-testid="map-legend" aria-label="Map legend" className="flex flex-wrap gap-2">
       {(Object.keys(markerConfig) as MarkerKind[]).map((kind) => {
         const Icon = markerConfig[kind].icon;
         return (
-          <Badge key={kind} variant="outline" data-testid="map-legend">
+          <Badge key={kind} variant="outline">
             <Icon aria-hidden data-icon="inline-start" />
             {markerConfig[kind].label}
           </Badge>
@@ -175,7 +175,7 @@ export function RouteMap({ trip }: { trip: TripPlan }) {
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <FitRoute positions={positions} />
             <RouteLine positions={positions} />
