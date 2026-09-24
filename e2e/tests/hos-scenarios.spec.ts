@@ -70,6 +70,28 @@ test.describe('Hours-of-service scenarios', () => {
     }
   });
 
+  test('AC-14: every stop in the two-day worked example names the rule that caused it', async ({
+    page,
+  }) => {
+    const planner = new PlannerPage(page);
+    await planner.goto();
+    await planner.fill(TWO_DAY_WORKED_EXAMPLE_TRIP.input);
+    await planner.submit();
+
+    await expect(page.getByTestId('stops-timeline').getByTestId('stop-reason')).toHaveText([
+      '1 hour on duty to load',
+      '8 hours of driving since the last break',
+      '11-hour driving limit reached',
+      'Fuel needed every 1,000 miles',
+      '1 hour on duty to unload',
+    ]);
+
+    await page.locator('[data-testid="stop-item"][data-stop-type="rest_10"]').click();
+    await expect(page.locator('.leaflet-popup-content')).toContainText(
+      '11-hour driving limit reached',
+    );
+  });
+
   test('AC-34: the John Doe golden log renders its exact four status totals', async ({ page }) => {
     await page.goto('/trips/john-doe-golden');
     const sheet = new LogSheetsPage(page).sheet(1);

@@ -113,6 +113,7 @@ export const tripPlanSchema = z.object({
       depart_at: z.string(),
       duration_min: z.number(),
       status: dutyStatusSchema,
+      reason: z.string().nullable(),
     }),
   ),
   daily_logs: z.array(dailyLogSchema),

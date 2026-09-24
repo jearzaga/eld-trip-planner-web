@@ -51,6 +51,7 @@ Graders test the hosted app for HOS accuracy and judge UI/UX; strong design can 
 | **AC-11** | Distinct markers, plus a legend, for start, pickup, dropoff, fuel, 30-min break, 10-hr rest and 34-hr restart. |
 | **AC-12** | Stops timeline in order: type, "City, ST", arrival, departure, duration. Clicking a stop focuses it on the map. |
 | **AC-13** | Summary showing total miles, driving hours, trip duration, arrival, number of log sheets and number of stops. |
+| **AC-14** | Every stop shows the rule that caused it (e.g. "8 hours of driving since the last break"), taken from the API. |
 
 ### 1.4 Output 2: daily log sheets
 
@@ -133,6 +134,7 @@ A task is ✅ only when:
 | AC-47 | — | web: `e2e/tests/trip-form.spec.ts`, `src/features/trip-form/TripForm.test.tsx` |
 | AC-10, 11 | — | web: `e2e/tests/route-map.spec.ts` |
 | AC-12, 13 | — | web: `route-map.spec.ts`, `src/features/stops/*.test.tsx` |
+| AC-14 | R-01…R-07, A-05 | api: `tests/unit/hos/test_engine_stop_reasons.py` · web: `hos-scenarios.spec.ts`, `src/features/stops/StopsTimeline.test.tsx` |
 | AC-20, 23 | R-08, R-10 | web: `e2e/tests/log-sheets.spec.ts` · api: `tests/unit/hos/test_log_builder.py` |
 | AC-21, 22 | — | web: `log-sheets.spec.ts` (visual snapshot), `src/features/log-sheets/*.test.tsx` |
 | AC-24, 26 | R-11, R-12 | web: `log-sheets.spec.ts` · api: `test_log_builder.py::test_header_*`, `::test_recap_*` |

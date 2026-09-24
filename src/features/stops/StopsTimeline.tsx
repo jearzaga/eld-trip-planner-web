@@ -58,8 +58,15 @@ export function StopsTimeline({ stops, timeZone }: { stops: TripStop[]; timeZone
                         {formatDateTime(stop.arrive_at, timeZone)} →{' '}
                         {formatDateTime(stop.depart_at, timeZone)}
                       </span>
-                      <span aria-label="Stop duration">· {formatDurationMinutes(stop.duration_min)}</span>
+                      <span aria-label="Stop duration">
+                        · {formatDurationMinutes(stop.duration_min)}
+                      </span>
                     </span>
+                    {stop.reason && (
+                      <span data-testid="stop-reason" className="text-muted-foreground text-xs">
+                        {stop.reason}
+                      </span>
+                    )}
                   </span>
                 </Button>
               </li>

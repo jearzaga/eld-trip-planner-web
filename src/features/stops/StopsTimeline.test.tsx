@@ -13,9 +13,7 @@ describe('StopsTimeline', () => {
   it('renders ordered stop details and selects a stop', async () => {
     const user = userEvent.setup();
     const trip = tripPlanSchema.parse(twoDayTrip);
-    renderWithProviders(
-      <StopsTimeline stops={trip.stops} timeZone={trip.summary.home_timezone} />,
-    );
+    renderWithProviders(<StopsTimeline stops={trip.stops} timeZone={trip.summary.home_timezone} />);
 
     expect(screen.getAllByTestId('stop-item')).toHaveLength(5);
     expect(screen.getByText('Baltimore, MD')).toBeInTheDocument();
@@ -23,5 +21,19 @@ describe('StopsTimeline', () => {
 
     await user.click(screen.getAllByTestId('stop-item')[1]);
     expect(useUiStore.getState().selectedStopSeq).toBe(2);
+  });
+
+  // AC-14
+  it('shows the rule that caused each stop', () => {
+    const trip = tripPlanSchema.parse(twoDayTrip);
+    renderWithProviders(<StopsTimeline stops={trip.stops} timeZone={trip.summary.home_timezone} />);
+
+    expect(screen.getAllByTestId('stop-reason').map((reason) => reason.textContent)).toEqual([
+      '1 hour on duty to load',
+      '8 hours of driving since the last break',
+      '11-hour driving limit reached',
+      'Fuel needed every 1,000 miles',
+      '1 hour on duty to unload',
+    ]);
   });
 });
