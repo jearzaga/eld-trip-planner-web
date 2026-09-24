@@ -81,9 +81,9 @@ Outer loop: enable `trip-form.spec.ts`.
 | W6-01 | Enable `trip-form.spec.ts` | red | ✅ |
 | W6-02 | `useServerStatus` + `WakeBanner` (health on load; banner after 3 s) | `useServerStatus.test.ts` | ✅ |
 | W6-03 | zod schema (locations selected, cycle 0–70 step 0.25) | `schema.test.ts` | ✅ |
-| W6-04 | `LocationAutocomplete` (300 ms debounce, keyboard nav) | `LocationAutocomplete.test.tsx` | ✅ |
+| W6-04 | `LocationAutocomplete` (suggestions on focus, 300 ms search debounce, keyboard nav, permission-based current location) | `LocationAutocomplete.test.tsx`, `trip-form.spec.ts` | ✅ |
 | W6-05 | `CycleInput` (slider + number; "X h available") | `CycleInput.test.tsx` | ✅ |
-| W6-06 | Start time, tz, inspections toggle, collapsible `LogDetailsSection` with demo defaults | `TripForm.test.tsx` | ✅ |
+| W6-06 | Calendar date, editable start time, tz, inspections toggle, collapsible `LogDetailsSection` with demo defaults | `TripForm.test.tsx`, `trip-form.spec.ts` | ✅ |
 | W6-07 | "Try a sample trip" | `TripForm.test.tsx::sample` | ✅ |
 | W6-08 | Submit → staged loader → navigate `/trips/:id` | `TripForm.test.tsx::submit` | ✅ |
 
@@ -128,6 +128,8 @@ Outer loop: enable `trip-form.spec.ts`.
 | W9-04 | Responsive 375 / 768 / 1440 | `responsive.spec.ts` | ✅ |
 | W9-05 | Axe fixes (labels, focus, contrast, landmarks, legend not color-only) | `a11y.spec.ts` | ✅ |
 | W9-06 | Visual polish: type scale, spacing, tokens, empty state, favicon, titles | screenshots review | ✅ |
+| W9-08 | Trip form guidance and responsive date, time, and location controls | mobile and desktop screenshots | ✅ |
+| W9-09 | Live waypoint preview, clearer planner and results navigation, and summary hierarchy | `trip-form.spec.ts`, `TripForm.test.tsx`, `TripPage.test.tsx`, responsive and a11y specs | ✅ |
 | W9-07 | ⏭️ Dark mode | — | ⏭️ |
 
 **Gate:** all non-smoke specs green on desktop + mobile.

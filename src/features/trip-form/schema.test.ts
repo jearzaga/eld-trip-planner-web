@@ -40,6 +40,21 @@ describe('trip form schema', () => {
     });
   });
 
+  it('rejects a missing date or a time outside a quarter-hour mark', () => {
+    const defaults = getTripFormDefaults(new Date('2026-09-24T10:07:00.000Z'), 'America/New_York');
+    const completeTrip = {
+      ...defaults,
+      current: selectedLocation,
+      pickup: selectedLocation,
+      dropoff: selectedLocation,
+    };
+
+    expect(tripFormSchema.safeParse({ ...completeTrip, start_time: 'T06:15' }).success).toBe(false);
+    expect(
+      tripFormSchema.safeParse({ ...completeTrip, start_time: '2026-09-24T06:07' }).success,
+    ).toBe(false);
+  });
+
   it('asks for a listed location when none was selected', () => {
     const defaults = getTripFormDefaults(new Date('2026-09-24T10:07:00.000Z'), 'America/New_York');
     const result = tripFormSchema.safeParse({

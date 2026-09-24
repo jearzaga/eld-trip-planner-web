@@ -241,7 +241,7 @@ export function LogGrid({ log }: { log: DailyLog }) {
         data-testid="duty-line"
         d={buildDutyPath(log)}
         fill="none"
-        stroke="var(--primary)"
+        stroke="currentColor"
         strokeWidth={4}
         strokeLinejoin="miter"
       />

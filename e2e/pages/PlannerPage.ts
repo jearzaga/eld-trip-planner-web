@@ -48,7 +48,22 @@ export class PlannerPage {
     await this.selectLocation('pickup', input.pickup);
     await this.selectLocation('dropoff', input.dropoff);
     await this.cycleUsed.fill(String(input.cycle_used_hrs));
-    await this.startTime.fill(input.start_time);
+    const [date = '', time = ''] = input.start_time.split('T');
+    const [year = '', month = '', day = ''] = date.split('-');
+    const monthName = new Date(Number(year), Number(month) - 1).toLocaleString('en-US', {
+      month: 'long',
+    });
+    await this.startTime.click();
+    await this.page.getByRole('combobox', { name: 'Choose the Year' }).selectOption(year);
+    await this.page
+      .getByRole('combobox', { name: 'Choose the Month' })
+      .selectOption(String(Number(month) - 1));
+    await this.page
+      .getByRole('button', {
+        name: new RegExp(`${monthName} ${Number(day)}(?:st|nd|rd|th), ${year}`),
+      })
+      .click();
+    await this.page.getByTestId('input-start-clock').fill(time);
   }
 
   async submit() {

@@ -37,9 +37,9 @@ Graders test the hosted app for HOS accuracy and judge UI/UX; strong design can 
 
 | ID | Criterion |
 |---|---|
-| **AC-01** | Current, pickup and dropoff locations can be entered with debounced autocomplete and a selection step. |
+| **AC-01** | Current, pickup and dropoff fields show selectable places on focus, then use debounced autocomplete for typed searches. Current location can also use browser geolocation after the driver clicks a permission-requesting action. |
 | **AC-02** | Current cycle used (hrs), 0–70 in steps of 0.25. Invalid values show an inline error and block submit (validated on both client and API). |
-| **AC-03** | Optional trip start date/time and home-terminal time zone, with defaults per A-11. |
+| **AC-03** | Optional trip start date/time and home-terminal time zone, with defaults per A-11. The date opens a shadcn calendar without a native date picker, while the time remains editable. |
 | **AC-04** | Optional "Log details" section (driver, carrier, main office, home terminal, truck/trailer numbers, shipping document), pre-filled with demo defaults (A-15). |
 | **AC-05** | A **"Try a sample trip"** button fills the form with a known multi-day scenario. |
 
@@ -87,6 +87,7 @@ Graders test the hosted app for HOS accuracy and judge UI/UX; strong design can 
 | **AC-44** | Accessible: labeled inputs, keyboard navigable, visible focus, color never the only signal. **No serious or critical axe violations.** |
 | **AC-45** | A shareable `/trips/:id` URL reloads the same plan. |
 | **AC-46** | **Cold-start handling:** when the Render API is waking up, the UI shows "Waking up the server (≈1 min on the free tier)…" and the request succeeds without the user having to retry. |
+| **AC-47** | Selected current, pickup, and drop-off locations appear in a live waypoint preview before planning. Typed places awaiting selection are marked as unpinned. The preview clearly distinguishes waypoint order from the calculated road route. |
 
 ### 1.7 Engineering quality
 
@@ -129,6 +130,7 @@ A task is ✅ only when:
 |---|---|---|
 | AC-01, 02, 05 | — | web: `e2e/tests/trip-form.spec.ts`, `src/features/trip-form/*.test.tsx` · api: `tests/api/test_trips_validation.py` |
 | AC-03, 04 | A-11, A-15 | web: `trip-form.spec.ts` · api: `tests/api/test_trips_create.py` |
+| AC-47 | — | web: `e2e/tests/trip-form.spec.ts`, `src/features/trip-form/TripForm.test.tsx` |
 | AC-10, 11 | — | web: `e2e/tests/route-map.spec.ts` |
 | AC-12, 13 | — | web: `route-map.spec.ts`, `src/features/stops/*.test.tsx` |
 | AC-20, 23 | R-08, R-10 | web: `e2e/tests/log-sheets.spec.ts` · api: `tests/unit/hos/test_log_builder.py` |

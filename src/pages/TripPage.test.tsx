@@ -25,8 +25,15 @@ describe('TripPage', () => {
     renderWithProviders(<RouterProvider router={router} />);
 
     expect(screen.getByTestId('trip-loading')).toBeInTheDocument();
-    expect(await screen.findByRole('heading', { name: /richmond.*kansas city/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /richmond.*kansas city/i }),
+    ).toBeInTheDocument();
     expect(screen.getAllByTestId('route-leg')).toHaveLength(twoDayTrip.route.legs.length);
+    expect(screen.getByRole('link', { name: /plan another trip/i })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /daily logs/i })).toHaveAttribute(
+      'href',
+      '#daily-logs',
+    );
 
     await user.click(screen.getByTestId('btn-copy-link'));
     expect(writeText).toHaveBeenCalledWith(expect.stringContaining(`/trips/${twoDayTrip.id}`));

@@ -5,11 +5,29 @@ import { TripForm } from '@/features/trip-form/TripForm';
 import { renderWithProviders } from '@/test/render';
 
 describe('TripForm', () => {
+  it('shares selected locations with the live preview when a sample trip is loaded', async () => {
+    const user = userEvent.setup();
+    const onLocationsChange = vi.fn();
+    renderWithProviders(
+      <TripForm onSubmit={vi.fn()} onPlanned={vi.fn()} onLocationsChange={onLocationsChange} />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Try a sample trip' }));
+
+    await waitFor(() =>
+      expect(onLocationsChange).toHaveBeenLastCalledWith({
+        current: { label: 'Richmond, VA', lat: 37.5407, lng: -77.436 },
+        pickup: { label: 'Baltimore, MD', lat: 39.2904, lng: -76.6122 },
+        dropoff: { label: 'Kansas City, MO', lat: 39.0997, lng: -94.5786 },
+      }),
+    );
+  });
+
   it('shows defaults and expands prefilled log details', async () => {
     const user = userEvent.setup();
     renderWithProviders(<TripForm onSubmit={vi.fn()} onPlanned={vi.fn()} />);
 
-    expect(screen.getByLabelText(/trip start/i)).not.toHaveValue('');
+    expect(screen.getByTestId('input-start-time')).toHaveTextContent(/\d{4}/);
     expect(screen.getByLabelText(/home-terminal time zone/i)).not.toHaveValue('');
     expect(screen.getByRole('switch', { name: /include inspections/i })).toBeChecked();
 
@@ -17,6 +35,21 @@ describe('TripForm', () => {
     expect(screen.getByLabelText(/driver name/i)).toHaveValue('John Doe');
     expect(screen.getByLabelText(/carrier name/i)).toHaveValue("John Doe's Transportation");
     expect(screen.getByLabelText(/shipping document/i)).toHaveValue('BOL-10001');
+  });
+
+  it('uses a calendar to update the trip start date while preserving the time', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<TripForm onSubmit={vi.fn()} onPlanned={vi.fn()} />);
+    const time = screen.getByLabelText('Start time');
+    const initialTime = (time as HTMLInputElement).value;
+
+    expect(screen.getByTestId('input-start-time').tagName).toBe('BUTTON');
+    await user.click(screen.getByTestId('input-start-time'));
+    expect(screen.getByRole('grid')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /^today$/i }));
+
+    expect(time).toHaveValue(initialTime);
+    expect(screen.getByTestId('input-start-time')).toHaveTextContent(/\d{4}/);
   });
 
   it('fills the known multi-day sample trip', async () => {

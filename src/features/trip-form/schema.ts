@@ -11,6 +11,21 @@ export const locationSchema = z.object(
 
 const requiredLogField = z.string().trim().min(1, 'Required on the daily log.');
 
+function isValidStartTime(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
+  if (!match) return false;
+  const [, year, month, day, hour, minute] = match.map(Number);
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day &&
+    hour < 24 &&
+    minute < 60 &&
+    minute % 15 === 0
+  );
+}
+
 export const logMetaSchema = z.object({
   driver_name: requiredLogField,
   co_driver_name: z.string(),
@@ -32,7 +47,9 @@ export const tripFormSchema = z.object({
     .min(0, 'Cycle used must be between 0 and 70 hours.')
     .max(70, 'Cycle used must be between 0 and 70 hours.')
     .refine((value) => Number.isInteger(value * 4), 'Use quarter-hour increments.'),
-  start_time: z.string().min(1, 'Choose a trip start time.'),
+  start_time: z
+    .string()
+    .refine(isValidStartTime, 'Choose a valid date and a time on a 15-minute mark.'),
   home_timezone: z.string().min(1, 'Choose a home-terminal time zone.'),
   include_inspections: z.boolean(),
   log_meta: logMetaSchema,
