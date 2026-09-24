@@ -24,11 +24,62 @@ test.describe('Trip form', () => {
   test('AC-01: locations use debounced autocomplete and require a selection', async ({ page }) => {
     const planner = new PlannerPage(page);
     await planner.goto();
+    await planner.currentLocation.focus();
+
+    await expect(page.getByTestId('suggestions-current')).toBeVisible();
+    await expect(
+      page.getByTestId('suggestions-current').getByTestId('suggestion-item').first(),
+    ).toBeVisible();
     await planner.currentLocation.fill('Rich');
 
     const suggestions = page.getByTestId('suggestions-current');
     await expect(suggestions).toBeVisible();
     await expect(suggestions.getByTestId('suggestion-item')).toContainText(['Richmond, VA']);
+  });
+
+  test('selected places update the live route preview before planning', async ({ page }) => {
+    const planner = new PlannerPage(page);
+    await planner.goto();
+    const preview = page.getByTestId('route-preview');
+
+    await planner.currentLocation.fill('Rich');
+    await expect(preview.getByTestId('preview-current')).toContainText('Rich');
+    await expect(preview.getByTestId('preview-current')).toContainText('Select a result');
+
+    await planner.selectLocation('current', TWO_DAY_WORKED_EXAMPLE_TRIP.input.current);
+    await planner.selectLocation('pickup', TWO_DAY_WORKED_EXAMPLE_TRIP.input.pickup);
+    await planner.selectLocation('dropoff', TWO_DAY_WORKED_EXAMPLE_TRIP.input.dropoff);
+
+    await expect(preview).toContainText('3 of 3 pinned');
+    await expect(preview.getByTestId('preview-current')).toContainText('Richmond, VA');
+    await expect(preview.getByTestId('preview-pickup')).toContainText('Baltimore, MD');
+    await expect(preview.getByTestId('preview-dropoff')).toContainText('Kansas City, MO');
+    await expect(preview.getByTestId('route-preview-map')).toBeVisible();
+    await expect(preview.locator('[data-testid^="preview-marker-"]')).toHaveCount(3);
+    await preview.getByTestId('route-preview-map').scrollIntoViewIfNeeded();
+    const mapBounds = await preview.getByTestId('route-preview-map').boundingBox();
+    expect(mapBounds).not.toBeNull();
+    for (const field of ['current', 'pickup', 'dropoff']) {
+      const markerBounds = await preview.getByTestId(`preview-marker-${field}`).boundingBox();
+      expect(markerBounds).not.toBeNull();
+      expect(markerBounds!.x).toBeGreaterThan(mapBounds!.x);
+      expect(markerBounds!.x + markerBounds!.width).toBeLessThan(mapBounds!.x + mapBounds!.width);
+      expect(markerBounds!.y).toBeGreaterThan(mapBounds!.y);
+      expect(markerBounds!.y + markerBounds!.height).toBeLessThan(mapBounds!.y + mapBounds!.height);
+    }
+  });
+
+  test('current location asks for device position only after clicking the action', async ({
+    page,
+    context,
+  }) => {
+    const planner = new PlannerPage(page);
+    await context.grantPermissions(['geolocation']);
+    await context.setGeolocation({ latitude: 37.5407, longitude: -77.436 });
+    await planner.goto();
+
+    await page.getByRole('button', { name: /use my location/i }).click();
+    await expect(planner.currentLocation).toHaveValue(/my location/i);
   });
 
   test('AC-02: cycle usage validates quarter-hours from zero through seventy', async ({ page }) => {
@@ -44,8 +95,25 @@ test.describe('Trip form', () => {
     const planner = new PlannerPage(page);
     await planner.goto();
 
-    await expect(planner.startTime).not.toHaveValue('');
+    await expect(planner.startTime).toHaveAttribute('type', 'button');
+    await expect(planner.startTime).toContainText(/\d{4}/);
+    await expect(page.locator('input[type="date"]')).toHaveCount(0);
     await expect(page.getByLabel(/home-terminal time zone/i)).not.toHaveValue('');
+    await planner.startTime.click();
+    await expect(page.getByRole('grid')).toBeVisible();
+  });
+
+  test('calendar selection and time are submitted together', async ({ page }) => {
+    const planner = new PlannerPage(page);
+    await planner.goto();
+    await planner.fill(TWO_DAY_WORKED_EXAMPLE_TRIP.input);
+
+    const tripRequest = page.waitForRequest('**/api/trips/');
+    await planner.submit();
+
+    expect((await tripRequest).postDataJSON().start_time).toBe(
+      TWO_DAY_WORKED_EXAMPLE_TRIP.input.start_time,
+    );
   });
 
   test('AC-04: optional log details are prefilled with demo values', async ({ page }) => {

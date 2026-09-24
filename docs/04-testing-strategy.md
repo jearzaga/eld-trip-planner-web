@@ -56,7 +56,7 @@ Defined canonically in the API repo; mirrored in `e2e/fixtures/scenarios.ts` (in
 | `harness.spec.ts` | App shell loads; API `/api/health/` ok (proves both servers + Mongo boot) | **W1** (green immediately) |
 | `api-contract.spec.ts` | `POST /api/trips/` for SC-1…SC-7: status codes, response shape, key numbers match synced fixtures | **A5** (API phase) |
 | `full-system.spec.ts` | No mocks: sample trip planned through the real API → `/trips/<id>` renders map, stops, filled log header, totals 24, and reloads (AC-45); SC-5 draws one sheet per API `daily_logs` entry | W5 |
-| `trip-form.spec.ts` | AC-01…AC-05 | W6 |
+| `trip-form.spec.ts` | AC-01…AC-05, AC-47 live waypoint preview | W6, W9 |
 | `route-map.spec.ts` | AC-10…AC-13 | W7 |
 | `share-link.spec.ts` | AC-45 | W7 |
 | `log-sheets.spec.ts` | AC-20…AC-27 (+ visual snapshot, print) | W8 |
@@ -75,8 +75,9 @@ controls; use test IDs for data regions.
 | Area | Test IDs |
 |---|---|
 | Server status | `wake-banner` |
-| Form | `trip-form`, `input-current`, `input-pickup`, `input-dropoff`, `input-cycle-used`, `input-start-time`, `toggle-inspections`, `log-details`, `btn-sample-trip`, `btn-plan-trip` |
+| Form | `trip-form`, `input-current`, `input-pickup`, `input-dropoff`, `input-cycle-used`, `input-start-time`, `input-start-clock`, `toggle-inspections`, `log-details`, `btn-sample-trip`, `btn-plan-trip` |
 | Autocomplete | `suggestions-<field>`, `suggestion-item` |
+| Waypoint preview | `route-preview`, `route-preview-map`, `preview-<field>`, `preview-marker-<field>` |
 | Status | `planning-loader`, `error-banner`, `error-retry` |
 | Summary | `summary-total-miles`, `summary-driving-hrs`, `summary-duration`, `summary-arrival`, `summary-log-days`, `summary-stop-count` |
 | Map | `route-map`, `route-polyline`, `map-legend`, `marker-<type>`, `route-legs`, `route-leg` |

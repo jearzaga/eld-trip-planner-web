@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Check, Copy, TriangleAlert } from 'lucide-react';
-import { useLocation, useParams } from 'react-router';
+import { ArrowLeft, Check, Copy, TriangleAlert } from 'lucide-react';
+import { Link, useLocation, useParams } from 'react-router';
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -82,36 +82,72 @@ export function TripPage() {
   };
 
   return (
-    <section className="flex flex-col gap-8">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div className="flex min-w-0 flex-col gap-2">
-          <p className="text-muted-foreground text-sm font-medium">Saved trip plan</p>
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            {trip.inputs.current.label} → {trip.inputs.dropoff.label}
-          </h2>
-          <p className="text-muted-foreground">
-            Starts {formatDateTime(trip.summary.start_at, trip.summary.home_timezone)} · Arrives{' '}
-            {formatDateTime(trip.summary.arrive_at, trip.summary.home_timezone)}
-          </p>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          data-testid="btn-copy-link"
-          onClick={() => void copyLink()}
+    <section className="flex flex-col gap-7 sm:gap-8">
+      <div className="bg-card flex flex-col gap-4 rounded-2xl border px-5 py-6 sm:px-8 sm:py-8">
+        <Link
+          to="/"
+          className="text-primary focus-visible:ring-ring flex w-fit items-center gap-1.5 rounded-md text-sm font-medium focus-visible:ring-2"
         >
-          {copied ? (
-            <Check data-icon="inline-start" aria-hidden="true" />
-          ) : (
-            <Copy data-icon="inline-start" aria-hidden="true" />
-          )}
-          {copied ? 'Link copied' : 'Copy link'}
-        </Button>
+          <ArrowLeft aria-hidden="true" className="size-4" />
+          Plan another trip
+        </Link>
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div className="flex min-w-0 flex-col gap-2">
+            <p className="text-primary text-sm font-semibold">Saved trip plan</p>
+            <h2 className="text-3xl font-semibold tracking-tight break-words sm:text-4xl">
+              {trip.inputs.current.label} → {trip.inputs.dropoff.label}
+            </h2>
+            <p className="text-muted-foreground">
+              Starts {formatDateTime(trip.summary.start_at, trip.summary.home_timezone)} · Arrives{' '}
+              {formatDateTime(trip.summary.arrive_at, trip.summary.home_timezone)}
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="self-start"
+            data-testid="btn-copy-link"
+            onClick={() => void copyLink()}
+          >
+            {copied ? (
+              <Check data-icon="inline-start" aria-hidden="true" />
+            ) : (
+              <Copy data-icon="inline-start" aria-hidden="true" />
+            )}
+            {copied ? 'Link copied' : 'Copy link'}
+          </Button>
+        </div>
       </div>
 
-      <SummaryCards trip={trip} />
+      <nav aria-label="Trip sections" className="flex flex-wrap gap-2">
+        <a
+          href="#trip-summary"
+          className="bg-card hover:bg-muted focus-visible:ring-ring rounded-full border px-3 py-1.5 text-sm font-medium focus-visible:ring-2"
+        >
+          Summary
+        </a>
+        <a
+          href="#route-and-stops"
+          className="bg-card hover:bg-muted focus-visible:ring-ring rounded-full border px-3 py-1.5 text-sm font-medium focus-visible:ring-2"
+        >
+          Route and stops
+        </a>
+        <a
+          href="#daily-logs"
+          className="bg-card hover:bg-muted focus-visible:ring-ring rounded-full border px-3 py-1.5 text-sm font-medium focus-visible:ring-2"
+        >
+          Daily logs
+        </a>
+      </nav>
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
+      <div id="trip-summary" className="scroll-mt-6">
+        <SummaryCards trip={trip} />
+      </div>
+
+      <div
+        id="route-and-stops"
+        className="grid scroll-mt-6 items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]"
+      >
         <RouteMap trip={trip} />
         <div className="flex flex-col gap-6">
           <RouteInstructions trip={trip} />
@@ -119,7 +155,9 @@ export function TripPage() {
         </div>
       </div>
 
-      <LogSheetPager trip={trip} />
+      <div id="daily-logs" className="scroll-mt-6">
+        <LogSheetPager trip={trip} />
+      </div>
     </section>
   );
 }

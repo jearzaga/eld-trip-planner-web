@@ -1,13 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Sparkles, TriangleAlert } from 'lucide-react';
-import { Controller, useForm, type FieldPath } from 'react-hook-form';
+import { Controller, useForm, useWatch, type FieldPath } from 'react-hook-form';
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { Switch } from '@/components/ui/switch';
 
@@ -15,16 +14,28 @@ import { CycleInput } from './CycleInput';
 import { LocationAutocomplete } from './LocationAutocomplete';
 import { LogDetailsSection } from './LogDetailsSection';
 import { PlanningLoader } from './PlanningLoader';
+import { TripStartPicker } from './TripStartPicker';
 import {
   getSampleTripValues,
   getTripFormDefaults,
   tripFormSchema,
+  type LocationOption,
   type TripFormValues,
 } from './schema';
+
+export type RouteLocations = {
+  current?: LocationOption;
+  pickup?: LocationOption;
+  dropoff?: LocationOption;
+};
+
+export type RouteLocationField = keyof RouteLocations;
 
 type TripFormProps = {
   onSubmit: (values: TripFormValues) => Promise<{ id: string }>;
   onPlanned: (id: string) => void;
+  onLocationsChange?: (locations: RouteLocations) => void;
+  onDraftChange?: (field: RouteLocationField, draft: string) => void;
 };
 
 const timeZones = [
@@ -70,7 +81,7 @@ function apiFieldErrors(error: unknown, formFields: object) {
   });
 }
 
-export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
+export function TripForm({ onSubmit, onPlanned, onLocationsChange, onDraftChange }: TripFormProps) {
   const defaults = useMemo(() => getTripFormDefaults(), []);
   const availableTimeZones = useMemo<ReadonlyArray<readonly [string, string]>>(
     () =>
@@ -91,6 +102,11 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
     resolver: zodResolver(tripFormSchema),
     defaultValues: defaults,
   });
+  const [current, pickup, dropoff] = useWatch({ control, name: ['current', 'pickup', 'dropoff'] });
+
+  useEffect(() => {
+    onLocationsChange?.({ current, pickup, dropoff });
+  }, [current, pickup, dropoff, onLocationsChange]);
 
   const submit = handleSubmit(async (values) => {
     setSubmitError(undefined);
@@ -110,12 +126,18 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
       <CardHeader>
         <CardTitle>Trip details</CardTitle>
         <CardDescription>
-          Add the route and current cycle usage. The server will calculate stops and logs.
+          Choose your route, then set when you want to leave. We’ll calculate the stops and logs.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form data-testid="trip-form" className="flex flex-col gap-5" onSubmit={submit} noValidate>
           <FieldGroup>
+            <div className="flex flex-col gap-1">
+              <h3 className="text-sm font-semibold">Route</h3>
+              <p className="text-muted-foreground text-sm">
+                Tap a field for suggestions or search for a place.
+              </p>
+            </div>
             <Controller
               name="current"
               control={control}
@@ -125,6 +147,7 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
                   label="Current location"
                   value={field.value}
                   onChange={field.onChange}
+                  onDraftChange={(draft) => onDraftChange?.('current', draft)}
                   error={errors.current?.message}
                 />
               )}
@@ -138,6 +161,7 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
                   label="Pickup location"
                   value={field.value}
                   onChange={field.onChange}
+                  onDraftChange={(draft) => onDraftChange?.('pickup', draft)}
                   error={errors.pickup?.message}
                 />
               )}
@@ -151,6 +175,7 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
                   label="Drop-off location"
                   value={field.value}
                   onChange={field.onChange}
+                  onDraftChange={(draft) => onDraftChange?.('dropoff', draft)}
                   error={errors.dropoff?.message}
                 />
               )}
@@ -167,19 +192,24 @@ export function TripForm({ onSubmit, onPlanned }: TripFormProps) {
               )}
             />
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field data-invalid={Boolean(errors.start_time)}>
-                <FieldLabel htmlFor="trip-start">Trip start</FieldLabel>
-                <Input
-                  id="trip-start"
-                  data-testid="input-start-time"
-                  type="datetime-local"
-                  step={900}
-                  aria-invalid={Boolean(errors.start_time)}
-                  {...register('start_time')}
+            <div className="flex flex-col gap-1">
+              <h3 className="text-sm font-semibold">Departure</h3>
+              <p className="text-muted-foreground text-sm">
+                Times are shown in your home-terminal time zone.
+              </p>
+            </div>
+            <Controller
+              name="start_time"
+              control={control}
+              render={({ field }) => (
+                <TripStartPicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.start_time?.message}
                 />
-                <FieldError>{errors.start_time?.message}</FieldError>
-              </Field>
+              )}
+            />
+            <div>
               <Field data-invalid={Boolean(errors.home_timezone)}>
                 <FieldLabel htmlFor="home-timezone">Home-terminal time zone</FieldLabel>
                 <NativeSelect
