@@ -28,7 +28,11 @@ import { formatDateTime, formatDurationMinutes } from '../trip-results/format';
 import type { TripPlan, TripStop } from '../trip-results/schema';
 
 type MarkerKind = 'start' | TripStop['type'];
-type IconComponent = ComponentType<{ 'aria-hidden'?: boolean; size?: number; strokeWidth?: number }>;
+type IconComponent = ComponentType<{
+  'aria-hidden'?: boolean;
+  size?: number;
+  strokeWidth?: number;
+}>;
 
 const markerConfig: Record<MarkerKind, { label: string; icon: IconComponent }> = {
   start: { label: 'Start', icon: Navigation },
@@ -96,7 +100,11 @@ function RouteLine({ positions }: { positions: LatLngExpression[] }) {
   }, []);
 
   return (
-    <Polyline ref={lineRef} positions={positions} pathOptions={{ color: 'var(--primary)', weight: 5 }} />
+    <Polyline
+      ref={lineRef}
+      positions={positions}
+      pathOptions={{ color: 'var(--primary)', weight: 5 }}
+    />
   );
 }
 
@@ -125,10 +133,10 @@ function StopMarker({ stop, timeZone }: { stop: TripStop; timeZone: string }) {
           <p className="font-semibold">{stop.label}</p>
           <p className="text-muted-foreground text-sm">{markerConfig[stop.type].label}</p>
           <p className="mt-2 text-sm">
-            {formatDateTime(stop.arrive_at, timeZone)} →{' '}
-            {formatDateTime(stop.depart_at, timeZone)}
+            {formatDateTime(stop.arrive_at, timeZone)} → {formatDateTime(stop.depart_at, timeZone)}
           </p>
           <p className="text-sm">Stop duration: {formatDurationMinutes(stop.duration_min)}</p>
+          {stop.reason && <p className="text-muted-foreground mt-1 text-xs">{stop.reason}</p>}
         </div>
       </Popup>
     </Marker>

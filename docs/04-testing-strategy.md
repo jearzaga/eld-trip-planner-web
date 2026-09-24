@@ -81,7 +81,7 @@ controls; use test IDs for data regions.
 | Status | `planning-loader`, `error-banner`, `error-retry` |
 | Summary | `summary-total-miles`, `summary-driving-hrs`, `summary-duration`, `summary-arrival`, `summary-log-days`, `summary-stop-count` |
 | Map | `route-map`, `route-polyline`, `map-legend`, `marker-<type>`, `route-legs`, `route-leg` |
-| Timeline | `stops-timeline`, `stop-item` (`data-stop-type`, `data-seq`) |
+| Timeline | `stops-timeline`, `stop-item` (`data-stop-type`, `data-seq`), `stop-reason` |
 | Log sheet | `log-sheet` (`data-day`), `log-date`, `log-from`, `log-to`, `log-miles-driving`, `log-total-mileage`, `log-carrier`, `log-main-office`, `log-home-terminal`, `log-vehicle-numbers`, `log-shipping-doc` |
 | Grid | `log-grid`, `duty-line`, `total-OFF`, `total-SB`, `total-D`, `total-ON`, `total-sum` |
 | Remarks / recap | `remark-item`, `recap-on-duty-today`, `recap-a`, `recap-b`, `recap-c`, `recap-restart-note` |

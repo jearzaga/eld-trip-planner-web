@@ -26,6 +26,7 @@
 | 8 | W7 | web | Map, stops, summary, share link | 0.75 d | ✅ | `route-map`, `share-link` green |
 | 9 | W8 | web | Daily log sheets | 1 d | ✅ | `log-sheets`, `hos-scenarios` green |
 | 10 | W9 | web | UX polish, errors, cold start, responsive, a11y | 0.5 d | ✅ | `cold-start`, `errors`, `responsive`, `a11y` green |
+| 10 | A12 + W12 | both | Stop reasons ("why this stop?") | 0.5 d | ✅ | `hos-scenarios` shows the rule behind each stop |
 | 11 | A10 + W10 | both | Production (Render live providers + Vercel) + smoke | 0.5 d | ⬜ | `@smoke` green in production |
 | 12 | A11 + W11 | both | READMEs, Loom, submit | 0.5 d | 🟨 | Submitted |
 
@@ -134,6 +135,19 @@ Outer loop: enable `trip-form.spec.ts`.
 
 **Gate:** all non-smoke specs green on desktop + mobile.
 
+## W12 — Stop reasons ("why this stop?")
+
+Runs after API A12. Each stop in the timeline and its map popup show the rule that caused it (AC-14); the text comes from `stop.reason`.
+
+| ID | Task | Test first | Status |
+|---|---|---|---|
+| W12-01 | `npm run sync-contract` after A12 (`chore(contract)` commit) | `api-contract.spec.ts` | ✅ |
+| W12-02 | `StopsTimeline` shows `stop.reason` (`stop-reason`) | `StopsTimeline.test.tsx` | ✅ |
+| W12-03 | `hos-scenarios.spec.ts`: the two-day example shows each stop's rule | red → green | ✅ |
+| W12-04 | Route map marker popup shows `stop.reason` | `RouteMap.test.tsx` | ✅ |
+
+**Gate:** `hos-scenarios.spec.ts` green (desktop + mobile).
+
 ## W10 — Production + smoke
 
 | ID | Task | Test first | Status |
@@ -167,6 +181,7 @@ Outer loop: enable `trip-form.spec.ts`.
 | 2026-09-24 | A4 and A5 backend tasks are published on API `main` at `47682a9`; A5-11 remains pending until the web consumer contract passes. | A4, A5, W5 |
 | 2026-09-24 | Browser scenario mocks now serve synced A5 fixtures | W5 |
 | 2026-09-24 | `api-contract.spec.ts` green against the sibling API closes W5-01 and A5-11 (A5 ✅). `full-system.spec.ts` plans and reloads a trip through the real API with no mocks | W5, A5 |
+| 2026-09-24 | **Stop reasons (AC-14).** The stops timeline and the map marker popup show `stop.reason` from the API. The SC-2 Day 1 visual snapshot is already 1 px off on `main` (1043 → 1044 px); left as is, not part of W12 | W12, A12 |
 | 2026-09-24 | **No CI pipelines** (unit, e2e, contract) in either repo. Contract freshness is checked locally with `npm run check-contract`; supersedes the CI deferral above | 04 §8 |
 
 ## Blockers / open questions

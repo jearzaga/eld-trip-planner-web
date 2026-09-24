@@ -208,6 +208,7 @@ export interface components {
             depart_at: string;
             duration_min: number;
             status: components["schemas"]["DutyStatusEnum"];
+            reason: string | null;
         };
         /**
          * @description * `pickup` - pickup

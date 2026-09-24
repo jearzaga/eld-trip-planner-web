@@ -54,4 +54,13 @@ describe('RouteMap', () => {
       /near Dayton, OH.*30-minute break.*Stop duration: 30 min/,
     );
   });
+
+  // AC-14
+  it('names the rule behind each stop in its marker popup', () => {
+    renderWithProviders(<RouteMap trip={tripPlanSchema.parse(twoDayTrip)} />);
+
+    expect(screen.getByText('near Dayton, OH').parentElement).toHaveTextContent(
+      '8 hours of driving since the last break',
+    );
+  });
 });
